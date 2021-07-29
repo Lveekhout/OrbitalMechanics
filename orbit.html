@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Orbit</title>
+    <style>
+        body {
+            background-color: beige;
+        }
+        canvas {
+            background-color: white;
+        }
+    </style>
+    <script>
+        function LFO(speed) {
+            this.angle = 0
+            this.speed = speed
+            this.value = Math.sin(this.angle)
+            this.update = () => {
+                this.angle += this.speed
+                if (this.angle>Math.PI*2) this.angle -= Math.PI*2
+                this.value = Math.sin(this.angle)
+            }
+        }
+    </script>
+    <script>
+        function Orbit(canvas) {
+            const lfo = new LFO(0.06)
+            const ctx = canvas.getContext('2d')
+
+            this.pos = {angle: 0, value: 300}
+            this.velocity = {angle: Math.PI / 2, value: 200 * Math.PI / 1}
+
+            this.draw = () => {
+                // ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+                ctx.beginPath()
+                ctx.moveTo(canvas.width / 2, 0)
+                ctx.lineTo(canvas.width / 2, canvas.height)
+                ctx.moveTo(0, canvas.height / 2)
+                ctx.lineTo(canvas.width, canvas.height / 2)
+                ctx.strokeStyle = 'blue'
+                ctx.stroke()
+
+                ctx.save()
+                ctx.translate(canvas.width / 2, canvas.height / 2)
+
+                ctx.beginPath()
+                ctx.arc(Math.cos(this.pos.angle) * this.pos.value, -Math.sin(this.pos.angle) * this.pos.value, 3, 0, Math.PI * 2)
+                ctx.fillStyle = 'red'
+                ctx.fill()
+
+                ctx.restore()
+            }
+
+            this.update = dts => {
+                lfo.update()
+                this.pos.angle += this.velocity.value * dts / this.pos.value
+                this.pos.value = 300 + lfo.value * 100
+            }
+        }
+    </script>
+    <script>
+        let orbit
+    </script>
+    <script>
+        let start
+        let current
+        let frameReq
+        const animate = milli => {
+            const dtm = milli - current // DeltaTimeMilliseconds
+            const dts = dtm / 1000      // DeltaTimeSeconds
+            current = milli
+
+            orbit.draw()
+            frameReq = window.requestAnimationFrame(animate)
+            orbit.update(dts)
+        }
+
+        const initAnimate = milli => {
+            start = current = milli
+            frameReq = window.requestAnimationFrame(animate)
+        }
+
+        const startAnimation = () => {
+            frameReq = window.requestAnimationFrame(initAnimate)
+        }
+
+        const stopAnimation = () => {
+            window.cancelAnimationFrame(frameReq)
+        }
+    </script>
+    <script>
+        window.onload = e => {
+            orbit = new Orbit(document.getElementById('canvas'))
+            startAnimation()
+        }
+    </script>
+</head>
+<body>
+<canvas id="canvas" width="1024" height="768"></canvas>
+<p id="output">Loading...</p>
+<a href="https://www.youtube.com/watch?v=Ky2XIElijvs">https://www.youtube.com/watch?v=Ky2XIElijvs</a>
+<a href="https://en.wikipedia.org/wiki/Centripetal_force">https://en.wikipedia.org/wiki/Centripetal_force</a>
+<a href="https://www.hhofstede.nl/modules/raaklijnellips.htm">https://www.hhofstede.nl/modules/raaklijnellips.htm</a>
+<a href="https://www.youtube.com/watch?v=mWj1ZEQTI8I">https://www.youtube.com/watch?v=mWj1ZEQTI8I</a>
+</body>
+</html>

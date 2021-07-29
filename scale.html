@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scale</title>
+    <style>
+        input[type="range"] {
+            width: 300px;
+        }
+        canvas {
+            background-color: ghostwhite;
+        }
+    </style>
+    <script>
+        const camera = {
+            x: 0,
+            y: 0,
+            scale: 1/60000,
+            fScale: (value, max) => -(max + 1) / (value - (max + 2)) // -(a+1)/(x-(a+2))
+        }
+        const iEarth = new Image()
+        iEarth.src = 'https://i.pinimg.com/originals/07/8a/b5/078ab50f97a4a8031c9a11b17324f22c.png'
+    </script>
+    <script>
+        const draw = ms => {
+            const canvas = document.getElementById('canvas')
+            const ctx = canvas.getContext('2d')
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+            {
+                ctx.save()
+                ctx.beginPath()
+                ctx.translate(- camera.x, - camera.y)
+                ctx.moveTo(canvas.width / 2, 0)
+                ctx.lineTo(canvas.width / 2, canvas.height)
+                ctx.moveTo(0, canvas.height / 2)
+                ctx.lineTo(canvas.width, canvas.height / 2)
+                ctx.strokeStyle = 'black'
+                ctx.globalAlpha = 0.05
+                ctx.stroke()
+                ctx.restore()
+            }
+
+            ctx.save()
+            ctx.translate(canvas.width / 2 - camera.x, canvas.height / 2 - camera.y)
+            ctx.scale(camera.scale, camera.scale)
+
+            // {
+            //     ctx.save()
+            //     ctx.font = '30pt Verdana'
+            //     ctx.textAlign = 'center'
+            //     ctx.textBaseline = 'middle'
+            //     ctx.fillText('Dit is een test', 0, 0)
+            //     ctx.restore()
+            // }
+
+            {
+                ctx.save()
+                ctx.scale(12742000 / 1638, 12742000 / 1638)
+                ctx.translate(-iEarth.width / 2, -iEarth.height / 2)
+                ctx.drawImage(iEarth, 0, 0)
+                ctx.restore()
+            }
+
+            {
+                ctx.save()
+                // ctx.translate(10, 5)
+                ctx.beginPath()
+                ctx.moveTo(0, 0)
+                ctx.lineTo(6371000, 0)
+                ctx.strokeStyle = 'red'
+                ctx.lineWidth = 1 / camera.scale
+                ctx.stroke()
+                ctx.restore()
+            }
+
+            ctx.restore()
+
+            // {
+            //     ctx.save()
+            //     ctx.translate(10, 5)
+            //     ctx.beginPath()
+            //     ctx.moveTo(0, 0)
+            //     ctx.lineTo(camera.scale, 0)
+            //     ctx.strokeStyle = 'red'
+            //     ctx.stroke()
+            //     ctx.restore()
+            // }
+        }
+    </script>
+    <script>
+        const setScale = (value, max) => {
+            camera.scale = camera.fScale(parseFloat(value), parseFloat(max))
+            window.requestAnimationFrame(draw)
+        }
+    </script>
+    <script>
+        window.onload = e => {
+            window.requestAnimationFrame(draw)
+
+            document.getElementById('scale-input').value = camera.scale
+
+            document.getElementById('canvas').addEventListener('mousemove', event => {
+                if (event.ctrlKey) {
+                    window.requestAnimationFrame(draw)
+                    event.preventDefault()
+                    camera.x = event.target.width / 2 - event.offsetX
+                    camera.y = event.target.height / 2 - event.offsetY
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+<canvas id="canvas" width="640" height="480"></canvas>
+<!--<input id="scale-input" type="range" min="1" max="100" step="0.01" oninput="setScale(this.value, this.max)"><span>Schaal</span><br>-->
+<input id="scale-input" type="range" min="0" max="100" oninput="setScale(this.value, this.max)"><span>Schaal</span><br>
+</body>
+</html>

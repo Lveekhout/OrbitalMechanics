@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ellipse</title>
+    <style>
+        input[type="range"] {
+            width: 300px;
+        }
+        canvas {
+            background-color: black;
+        }
+    </style>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="text/javascript">
+        function Point2d() {
+            let len = 0
+            let angle
+
+            this.get = () => { return {x: Math.cos(angle) * len, y: Math.sin(angle) * len, len: len, angle: angle} }
+            this.getAngle = () => angle
+            this.setPos = value => {
+                len = Math.sqrt(Math.pow(value[0], 2) + Math.pow(value[1], 2))
+                angle = Math.atan2(value[1], value[0])
+                return this
+            }
+            this.setLen = value => {
+                len  = value
+                return this
+            }
+            this.setAngle = value => {
+                angle = value
+                return this
+            }
+        }
+    </script>
+    <script>
+        const Q = {
+            pos: {len: 50, ang: 1},
+            vec: {len: 100, ang: Math.PI / 1.5}
+        }
+        const P = new Point2d().setLen(100).setAngle(0)
+        let p = 50
+        let a = 320
+        let b = Math.sqrt(Math.pow(a, 2)-Math.pow(a - p, 2))
+        let c = Math.sqrt(Math.pow(a, 2) - Math.pow(b, 2))
+    </script>
+    <script>
+        const drawVector = (ctx, len, angle, point, color) => {
+            ctx.save()
+            ctx.rotate(-angle)
+
+            {
+                ctx.beginPath()
+                ctx.moveTo(0, 0)
+                ctx.lineTo(len, 0)
+                ctx.strokeStyle = color
+                ctx.stroke()
+
+                ctx.beginPath()
+                ctx.moveTo(len - point, -point * (3/5))
+                ctx.lineTo(len, 0)
+                ctx.lineTo(len - point, point * (3/5))
+                ctx.closePath()
+                ctx.fillStyle = color
+                ctx.fill()
+            }
+            {
+                ctx.beginPath()
+                ctx.arc(0, 0, 3, 0, Math.PI * 2)
+                ctx.fillStyle = 'red'
+                ctx.fill()
+            }
+
+            ctx.restore()
+        }
+        const drawPositionedVector = (ctx, pos, len, angle, point, color) => {
+            ctx.save()
+            ctx.translate(pos[0], -pos[1])
+            drawVector(ctx, len, angle, point,  color)
+            ctx.restore()
+        }
+        const drawLijnstuk = (ctx, len, angle, color) => {
+            ctx.save()
+            ctx.rotate(-angle)
+            ctx.beginPath()
+            ctx.moveTo(-len, 0)
+            ctx.lineTo(len, 0)
+            ctx.strokeStyle = color
+            ctx.stroke()
+            ctx.restore()
+        }
+        const drawPositionedLijnstuk = (ctx, pos, len, angle, color) => {
+            ctx.save()
+            ctx.translate(pos[0], -pos[1])
+            drawLijnstuk(ctx, len, angle, color)
+            ctx.restore()
+        }
+    </script>
+    <script>
+        const draw = m => {
+            const canvas = document.getElementById('canvas')
+            const ctx = canvas.getContext('2d')
+
+            {
+                const metrics = document.getElementById('metrics')
+                const info = {
+                    value: {
+                        a: `${a.toFixed(2)} (${typeof(a)})`,
+                        b: `${b.toFixed(2)} (${typeof(b)})`,
+                        c: `${c.toFixed(2)} (${typeof(c)})`,
+                        e: `${(c/a).toFixed(15)}`
+                    }
+                }
+                metrics.innerHTML = JSON.stringify(info, null, 2)
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            ctx.save()
+            ctx.translate(canvas.width / 2, canvas.height / 2)
+            {
+                drawPositionedVector(ctx, [Q.pos.len * Math.cos(Q.pos.ang), Q.pos.len * Math.sin(Q.pos.ang)], Q.vec.len, Q.vec.ang, 5, '#CCC')
+            }
+            {
+                const p = P.get()
+                drawPositionedVector(ctx, [p.x, p.y], p.len, p.angle, 5, '#CCC')
+            }
+            // {
+            //     drawPositionedLijnstuk(ctx, [Q.pos.x, Q.pos.y], 100, Q.vec.ang + Math.PI / 2, 'gray')
+            // }
+            // {
+            //     ctx.beginPath()
+            //     ctx.arc(0, 0, 3, 0, Math.PI * 2)
+            //     ctx.fillStyle = 'red'
+            //     ctx.fill()
+            // }
+            {
+                ctx.beginPath()
+                ctx.ellipse(0, 0, a, b, -1, 0, Math.PI * 2)
+                ctx.strokeStyle = 'white'
+                ctx.stroke()
+            }
+            // {
+            //     ctx.beginPath()
+            //     ctx.arc(c, 0, 3, 0, Math.PI * 2)
+            //     ctx.arc(-c, 0, 3, 0, Math.PI * 2)
+            //     ctx.fillStyle = 'white'
+            //     ctx.fill()
+            // }
+            ctx.restore()
+        }
+    </script>
+    <script>
+        const setA = value => {
+            a = parseInt(value)
+            c = parseInt(value) - p
+            b = Math.sqrt(Math.pow(a, 2) - Math.pow(c, 2))
+            document.getElementById('input002').value = b
+            document.getElementById('input003').value = c
+            window.requestAnimationFrame(draw)
+        }
+        const setB = value => {
+            b = parseInt(value)
+            c = Math.pow(b, 2) / (2 * p) - p / 2
+            a = Math.sqrt(Math.pow(b, 2) + Math.pow(c, 2))
+            document.getElementById('input001').value = a
+            document.getElementById('input003').value = c
+            window.requestAnimationFrame(draw)
+        }
+        const setC = value => {
+            c = parseInt(value)
+            a = parseInt(value) + p
+            b = Math.sqrt(Math.pow(a, 2) - Math.pow(c, 2))
+            document.getElementById('input001').value = a
+            document.getElementById('input002').value = b
+            window.requestAnimationFrame(draw)
+        }
+        const setQ = value => {
+            Q.vec.ang = value / 180 * Math.PI
+            window.requestAnimationFrame(draw)
+        }
+        const setP = value => {
+            P.setLen(value)
+            window.requestAnimationFrame(draw)
+        }
+        const clickCanvas = event => {
+            const canvas = document.getElementById('canvas')
+            const x = event.offsetX - (canvas.width / 2 - c)
+            const y = event.offsetY - canvas.height / 2
+            console.log(`offset: (${event.offsetX}, ${event.offsetY}) -=> (${x}, ${y})`)
+        }
+    </script>
+    <script>
+        window.onload = e => {
+            document.getElementById('input001').value = a
+            document.getElementById('input002').value = b
+            document.getElementById('input003').value = c
+            window.requestAnimationFrame(draw)
+        }
+    </script>
+</head>
+<body>
+<input id="input001" type="range" min="0" max="320" step="1" oninput="setA(this.value)">
+<input id="input002" type="range" min="0" max="100" step="1" disabled>
+<input id="input003" type="range" min="0" max="320" step="1" oninput="setC(this.value)">
+<input id="input004" type="range" min="0" max="359" step="1" oninput="setQ(this.value)">
+<input id="input005" type="range" min="0" max="359" step="1" oninput="setP(this.value)">
+<input id="input006" type="range" min="0" max="359" step="1" disabled>
+<canvas id="canvas" width="640" height="480" onclick="clickCanvas(event)"></canvas>
+<textarea id="metrics" style="width: 400px; height: 480px"></textarea>
+<div>\[c^2 = a^2 - b^2\]</div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MathJax</title>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        const M = 5.972e24
+        const G = 6.67408e-11
+        const u = M * G
+        let r = 9000000
+        let m = 80
+        let v = 9000//9411.294
+    </script>
+    <script>
+        const draw = () => {
+            const Ek = 0.5*m*Math.pow(v, 2)
+            const Ep = m*u/r
+            document.getElementById('algemeen1').innerText = `\\[\\frac{1}{2}mv^2 - \\frac{m\\cdot{M}\\cdot{G}}{r}=-\\frac{m\\cdot{M}\\cdot{G}}{2a}\\]`
+            document.getElementById('algemeen2').innerText = `\\[\\frac{1}{2}v^2 - \\frac{M\\cdot{G}}{r}=-\\frac{M\\cdot{G}}{2a}\\]`
+            document.getElementById('algemeen3').innerText = `\\[a=-\\frac{M\\cdot{G}}{2(\\frac{1}{2}v^2 - \\frac{M\\cdot{G}}{r})}\\]`
+            document.getElementById('algemeen4').innerText = `\\[a=-\\frac{M\\cdot{G}}{v^2 - \\frac{2\\cdot{M}\\cdot{G}}{r}}\\]`
+            document.getElementById('ek').innerText = `\\[E_k=\\frac{1}{2}mv^2=\\frac{1}{2}\\cdot${m}\\cdot${v}^2=${Ek}\\]`
+            document.getElementById('ep').innerText = `\\[E_p=\\frac{m\\mu}{r}=\\frac{${m}\\cdot${u}}{${r}}=${Ep}\\]`
+            document.getElementById('etot').innerText = `\\[E_{tot}=${Ek - Ep}\\]`
+            document.getElementById('2a').innerText = `\\[a=\\frac{-m\\mu}{2\\cdot${Ek - Ep}}=${-m*u/(2*(Ek-Ep))}\\]`
+            MathJax.typesetPromise()
+        }
+    </script>
+    <script>
+        window.onload = () => {
+            draw()
+        }
+    </script>
+</head>
+<body>
+<div id="algemeen1"></div>
+<div id="algemeen2"></div>
+<div id="algemeen3"></div>
+<div id="algemeen4"></div>
+<hr>
+<div id="ek"></div>
+<div id="ep"></div>
+<div id="etot"></div>
+<div id="2a"></div>
+<!--<div>\[\frac{\cos(\arcsin(\frac{\sin(\beta)}{\cos(\alpha)}))\times \cos(\alpha)}{\sqrt{1-(\sin(\arcsin(\frac{\sin(\beta)}{\cos(\alpha)}))\times \cos(\alpha))^2}}=\cos(\gamma)\]</div>-->
+</body>
+</html>

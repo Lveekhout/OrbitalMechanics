@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Raaklijn</title>
+    <style>
+        body {
+            background-color: beige;
+        }
+        canvas#main {
+            background-color: gray;
+        }
+        canvas#graph {
+            position: absolute;
+            opacity: 0.7;
+            top: 0;
+            left: 0;
+            background-color: #d0d0d0;
+        }
+    </style>
+    <script>
+        let main
+        let ctx
+        let orbit = []
+        let angle
+        let a = 320
+        let b = 240
+
+        const drawGraph  = () => {
+            {
+                orbit = []
+                for (let angle = 0; angle < Math.PI * 2; angle += Math.PI * 2 / 314) {
+                    const P = {x: a * Math.cos(angle), y: b * Math.sin(angle)}
+                    const c = Math.sqrt(Math.pow(a, 2) - Math.pow(b, 2))
+                    const hoeken = [Math.atan2(P.y, P.x + c), Math.atan2(P.y, P.x - c)]
+                    const bissectrice = (hoeken[0] + hoeken[1]) / 2
+                    const tangent = bissectrice + Math.PI / 2
+                    orbit.push(tangent - hoeken[0])
+                }
+            }
+
+            const graph = document.getElementById('graph')
+            const ctx = graph.getContext('2d')
+
+            ctx.globalAlpha = 0.7
+            ctx.clearRect(0, 0, graph.width, graph.height)
+
+            ctx.save()
+            ctx.translate(0, graph.height / 2)
+
+            ctx.beginPath()
+            ctx.moveTo(0, -orbit[0] * 15)
+            for (let angle = 1; angle < orbit.length; angle++) {
+                ctx.lineTo(angle, -orbit[angle] * 15)
+            }
+            ctx.stroke()
+
+            ctx.restore()
+        }
+
+        const draw = dtm => {
+            ctx.clearRect(0, 0, main.width, main.height)
+
+            ctx.save()
+            ctx.translate(main.width / 2, main.height / 2)
+
+            const c = Math.sqrt(Math.pow(a, 2) - Math.pow(b, 2))
+
+            ctx.beginPath()
+            ctx.ellipse(0, 0, a, b, 0, 0, Math.PI * 2)
+            ctx.strokeStyle = 'blue'
+            ctx.stroke()
+
+            ctx.beginPath()
+            ctx.moveTo(-main.width / 2, 0)
+            ctx.lineTo(main.width / 2, 0)
+            ctx.strokeStyle = 'blue'
+            ctx.stroke()
+
+            ctx.beginPath()
+            ctx.moveTo(0, -main.height / 2)
+            ctx.lineTo(0, main.height / 2)
+            ctx.strokeStyle = 'blue'
+            ctx.stroke()
+
+            const P = {x: a * Math.cos(angle), y: b * Math.sin(angle)}
+
+            const hoeken = [Math.atan2(P.y, P.x + c), Math.atan2(P.y, P.x - c)]
+            const bissectrice = (hoeken[0] + hoeken[1]) / 2
+            const tangent = bissectrice + Math.PI / 2
+            document.getElementById('output').innerHTML = `${hoeken[0]} - ${hoeken[1]} - ${bissectrice} - ${tangent}`
+
+            {
+                ctx.beginPath()
+                ctx.arc(P.x, -P.y, 4, 0, Math.PI * 2)
+                ctx.fillStyle = 'red'
+                ctx.fill()
+            }
+            {
+                const rc = Math.sin(tangent) / Math.cos(tangent)
+                const b_ = P.y - rc * P.x
+                ctx.beginPath()
+                let x = -main.width / 2
+                ctx.moveTo(x, -(rc * x + b_))
+                x = main.width / 2
+                ctx.lineTo(x, -(rc * x + b_))
+                ctx.strokeStyle = 'yellow'
+                ctx.stroke()
+            }
+            {
+                ctx.beginPath()
+                ctx.moveTo(c, 0)
+                ctx.lineTo(P.x, -P.y)
+                ctx.lineTo(-c, 0)
+                ctx.strokeStyle = 'orange'
+                ctx.stroke()
+            }
+            ctx.restore()
+        }
+    </script>
+    <script>
+        window.onload = e => {
+            window.requestAnimationFrame(draw)
+
+            main = document.getElementById('main')
+            ctx = main.getContext('2d')
+
+            {
+                ctx.save()
+                ctx.translate(main.width / 2, main.height / 2)
+
+                ctx.beginPath()
+                ctx.ellipse(0, 0, 320, 240, 0, 0, Math.PI * 2)
+                ctx.strokeStyle = 'blue'
+                ctx.stroke()
+
+                for (let q = 0; q < Math.PI * 2; q += Math.PI / 60) {
+                    ctx.beginPath()
+                    ctx.arc(320 * Math.cos(q), -240 * Math.sin(q), 2, 0, Math.PI * 2)
+                    orbit.push([320 * Math.cos(q), 0 * Math.sin(q)])
+                    ctx.fillStyle = 'red'
+                    ctx.fill()
+                }
+                ctx.restore()
+            }
+
+            {
+                ctx.beginPath()
+                ctx.moveTo(0, 320 + orbit[0][0])
+                for (let idx = 1; idx < orbit.length; idx++) {
+                    ctx.lineTo(idx * 6, 320 + orbit[idx][0])
+                }
+                ctx.strokeStyle = 'white'
+                ctx.stroke()
+            }
+        }
+    </script>
+</head>
+<body>
+<div style="display: inline-block; position: relative">
+    <canvas id="main" width="1024" height="768"></canvas>
+    <canvas id="graph" width="314" height="150"></canvas>
+</div>
+<p id="output">Loading...</p>
+<a href="https://www.youtube.com/watch?v=Ky2XIElijvs">https://www.youtube.com/watch?v=Ky2XIElijvs</a>
+<a href="https://en.wikipedia.org/wiki/Centripetal_force">https://en.wikipedia.org/wiki/Centripetal_force</a>
+<a href="https://www.hhofstede.nl/modules/raaklijnellips.htm">https://www.hhofstede.nl/modules/raaklijnellips.htm</a>
+</body>
+<script>
+    document.getElementById('main').addEventListener('mousemove', e => {
+        if (e.ctrlKey) {
+            angle = 2 * Math.PI * e.offsetY / e.target.height
+            window.requestAnimationFrame(draw)
+        }
+        if (e.altKey) {
+            b = 320 * e.offsetY / e.target.height
+            window.requestAnimationFrame(draw)
+            window.requestAnimationFrame(drawGraph)
+        }
+    })
+</script>
+</html>

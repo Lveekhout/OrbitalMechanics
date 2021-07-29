@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hoek van inval</title>
+    <style>
+        input[type="range"] {
+            width: 300px;
+        }
+        canvas {
+            background-color: black;
+        }
+    </style>
+    <script>
+        const drawVector = (ctx, len, angle, point, color) => {
+            ctx.save()
+            ctx.rotate(-angle)
+
+            {
+                ctx.beginPath()
+                ctx.moveTo(0, 0)
+                ctx.lineTo(len, 0)
+                ctx.strokeStyle = color
+                ctx.stroke()
+
+                ctx.beginPath()
+                ctx.moveTo(len - point, -point * (3/5))
+                ctx.lineTo(len, 0)
+                ctx.lineTo(len - point, point * (3/5))
+                ctx.closePath()
+                ctx.fillStyle = color
+                ctx.fill()
+            }
+            {
+                ctx.beginPath()
+                ctx.arc(0, 0, 3, 0, Math.PI * 2)
+                ctx.fillStyle = 'red'
+                ctx.fill()
+            }
+
+            ctx.restore()
+        }
+        const drawLijnstuk = (ctx, len, angle, color) => {
+            ctx.save()
+            ctx.rotate(-angle)
+            ctx.beginPath()
+            ctx.moveTo(-len, 0)
+            ctx.lineTo(len, 0)
+            ctx.strokeStyle = color
+            ctx.stroke()
+            ctx.restore()
+        }
+    </script>
+    <script name="DRAWTEST">
+        let angle1 = 0
+        let angle2 = 0
+
+        const draw = m => {
+            const canvas = document.getElementById('canvas')
+            const ctx = canvas.getContext('2d')
+            ctx.lineWidth = 1.5
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            ctx.save()
+            ctx.translate(canvas.width / 2, canvas.height / 2)
+
+            drawLijnstuk(ctx, 320, angle2 - Math.PI / 2, 'gray')
+
+            const angle3 = 2 * angle2 - angle1
+            drawVector(ctx, 100, angle1, 5, 'white')
+            drawVector(ctx, 100, angle2, 5, 'green')
+            drawVector(ctx, 100, angle3, 5, 'blue')
+
+            ctx.restore()
+        }
+    </script>
+    <script>
+        const setAngle1 = value => {
+            angle1 = value * Math.PI / 180
+            window.requestAnimationFrame(draw)
+        }
+        const setAngle2 = value => {
+            angle2 = value * Math.PI / 180
+            window.requestAnimationFrame(draw)
+        }
+    </script>
+    <script>
+        window.onload = e => {
+            window.requestAnimationFrame(draw)
+        }
+    </script>
+</head>
+<body>
+<input id="input001" type="range" min="0" max="359" step="1" oninput="setAngle1(this.value)">
+<input id="input002" type="range" min="0" max="359" step="1" oninput="setAngle2(this.value)">
+<canvas id="canvas" width="640" height="480"></canvas>
+<textarea id="metrics" style="width: 400px; height: 480px"></textarea>
+</body>
+</html>
