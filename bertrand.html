@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bertrand's paradox</title>
+    <style>
+        canvas {
+            background-color: #aaaaf1;
+        }
+    </style>
+    <script>
+        const camera = {x: 800, y: 450, scale: 250}
+        const visor = {x: 100, y: 100, visible: false}
+        const method1 = { totaal: 0, langer: 0, list: [] }
+        const method2 = { totaal: 0, langer: 0, list: [] }
+        const method3 = { totaal: 0, langer: 0, list: [] }
+        const random1 = new RandomGenerator(0)
+        const random2 = new RandomGenerator(0)
+        const random3 = new RandomGenerator(0)
+        const randomPointInCircle1 = () => {
+            const p = [random1.next() * Math.PI * 2, random1.next() * Math.PI * 2]
+            const x = [Math.cos(p[0]), Math.cos(p[1])]
+            const y = [-Math.sin(p[0]), -Math.sin(p[1])]
+            return [(x[0] + x[1]) / 2, (y[0] + y[1]) / 2]
+        }
+        const randomPointInCircle2 = () => {
+            const angle = random2.next() * Math.PI * 2
+            const len = Math.sqrt(random2.next())
+            return [Math.cos(angle) * len, -Math.sin(angle) * len]
+        } // https://stackoverflow.com/questions/5837572/generate-a-random-point-within-a-circle-uniformly
+        const randomPointInCircle3 = () => {
+            const angle = random3.next() * Math.PI * 2
+            const len = random3.next()
+            return [Math.cos(angle) * len, -Math.sin(angle) * len]
+        }
+        function RandomGenerator(seed) {
+            this.seed = seed
+            this.next = () => {
+                const num = Math.sin(this.seed++) * 10000
+                return num - Math.floor(num)
+            }
+        }
+    </script> <!-- Global variables-->
+    <script>
+        const draw = ms => {
+            window.requestAnimationFrame(draw)
+            const canvas = document.getElementById('canvas')
+            const ctx = canvas.getContext('2d')
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+            ctx.save()
+            ctx.translate(camera.x, camera.y)
+            ctx.scale(camera.scale, camera.scale)
+            {
+                {
+                    ctx.save()
+
+                    ctx.strokeStyle = 'gray'
+                    ctx.lineWidth = 1 / camera.scale
+                    ctx.beginPath()
+                    ctx.moveTo(-10, 0)
+                    ctx.lineTo(10, 0)
+                    ctx.moveTo(0, 10)
+                    ctx.lineTo(0, -10)
+                    ctx.stroke()
+
+                    ctx.strokeStyle = 'blue'
+                    ctx.lineWidth = 3 / camera.scale
+                    ctx.beginPath()
+                    ctx.arc(-2.1, 0, 1, 0, Math.PI * 2, false)
+                    ctx.stroke()
+                    ctx.beginPath()
+                    ctx.arc(-2.1, 0, .5, 0, Math.PI * 2, false)
+                    ctx.stroke()
+                    ctx.beginPath()
+                    ctx.arc(0, 0, 1, 0, Math.PI * 2, false)
+                    ctx.stroke()
+                    ctx.beginPath()
+                    ctx.arc(0, 0, .5, 0, Math.PI * 2, false)
+                    ctx.stroke()
+                    ctx.beginPath()
+                    ctx.arc(2.1, 0, 1, 0, Math.PI * 2, false)
+                    ctx.stroke()
+                    ctx.beginPath()
+                    ctx.arc(2.1, 0, .5, 0, Math.PI * 2, false)
+                    ctx.stroke()
+
+                    ctx.fillStyle = 'purple'
+                    ctx.strokeStyle = 'purple'
+                    ctx.lineWidth = 1 / camera.scale
+                    method1.list.forEach((p, i, q) => {
+                        ctx.beginPath()
+                        ctx.arc(p[0] - 2.1, p[1], 3 / camera.scale, 0, Math.PI * 2, false)
+                        ctx.globalAlpha = (i + 1) / q.length
+                        ctx.fill()
+                    })
+                    const coord1 = randomPointInCircle1()
+                    method1.totaal++
+                    if (Math.sqrt(Math.pow(coord1[0], 2) + Math.pow(coord1[1], 2)) < .5) method1.langer++
+                    method1.list.push(coord1)
+                    if (method1.list.length > 100) method1.list.shift()
+
+                    method2.list.forEach((p, i, q) => {
+                        ctx.beginPath()
+                        ctx.arc(p[0], p[1], 3 / camera.scale, 0, Math.PI * 2, false)
+                        ctx.globalAlpha = (i + 1) / q.length
+                        ctx.fill()
+                    })
+                    const coord2 = randomPointInCircle2()
+                    method2.totaal++
+                    if (Math.sqrt(Math.pow(coord2[0], 2) + Math.pow(coord2[1], 2)) < .5) method2.langer++
+                    method2.list.push(coord2)
+                    if (method2.list.length > 100) method2.list.shift()
+
+                    method3.list.forEach((p, i, q) => {
+                        ctx.beginPath()
+                        ctx.arc(p[0] + 2.1, p[1], 3 / camera.scale, 0, Math.PI * 2, false)
+                        ctx.globalAlpha = (i + 1) / q.length
+                        ctx.fill()
+                    })
+                    const coord3 = randomPointInCircle3()
+                    method3.totaal++
+                    if (Math.sqrt(Math.pow(coord3[0], 2) + Math.pow(coord3[1], 2)) < .5) method3.langer++
+                    method3.list.push(coord3)
+                    if (method3.list.length > 100) method3.list.shift()
+
+                    ctx.fillStyle = 'black'
+                    ctx.beginPath()
+                    ctx.fillText((method1.langer * 100 / method1.totaal).toFixed(8), -2.5, 1.2)
+                    ctx.fillText((method2.langer * 100 / method2.totaal).toFixed(8), -.4, 1.2)
+                    ctx.fillText((method3.langer * 100 / method3.totaal).toFixed(8), 1.7, 1.2)
+                    ctx.fill()
+
+                    ctx.restore()
+                } // Shapes
+            } // Layers
+            ctx.restore()
+
+            if (visor.visible) {
+                ctx.save()
+                ctx.beginPath()
+                ctx.moveTo(visor.x, 0)
+                ctx.lineTo(visor.x, canvas.height)
+                ctx.moveTo(0, visor.y)
+                ctx.lineTo(canvas.width, visor.y)
+                ctx.strokeStyle = 'red'
+                ctx.lineWidth = 2
+                ctx.stroke()
+                ctx.restore()
+            }
+        }
+    </script>
+    <script>
+        window.onload = e => {
+            window.requestAnimationFrame(draw)
+
+            document.getElementById('canvas').getContext('2d').font = '.1pt Courier New'
+            document.getElementById('canvas').getContext('2d').textBaseline = 'middle'
+
+            document.getElementById('canvas').addEventListener('mousemove', event => {
+                // window.requestAnimationFrame(draw)
+                event.preventDefault()
+
+                visor.x = event.offsetX
+                visor.y = event.offsetY
+
+                if (event.ctrlKey) {
+                    camera.x = event.offsetX
+                    camera.y = event.offsetY
+                } else if (event.buttons === 1) {
+                    camera.x += event.movementX
+                    camera.y += event.movementY
+                }
+            })
+
+            document.getElementById('canvas').addEventListener('mousewheel', event => {
+                // window.requestAnimationFrame(draw)
+                event.preventDefault()
+
+                const scaleBefore = camera.scale
+                camera.scale *= 1 - event.deltaY / 1000
+                camera.scale = Math.min(Math.max(camera.scale, 0.1), 100000)
+
+                camera.x = event.offsetX - ((event.offsetX - camera.x) / scaleBefore) * camera.scale
+                camera.y = event.offsetY - ((event.offsetY - camera.y) / scaleBefore) * camera.scale
+            })
+
+            document.getElementById('canvas').addEventListener('mouseenter', event => {
+                // window.requestAnimationFrame(draw)
+                visor.visible = true
+            })
+
+            document.getElementById('canvas').addEventListener('mouseleave', event => {
+                // window.requestAnimationFrame(draw)
+                visor.visible = false
+            })
+        }
+    </script>
+</head>
+<body>
+<canvas id="canvas" width="1600" height="900"></canvas>
+</body>
+</html>

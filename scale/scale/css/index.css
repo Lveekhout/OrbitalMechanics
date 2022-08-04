@@ -1,0 +1,7 @@
+canvas {
+    background-color: #aaaaf1;
+}
+
+input[type="range"] {
+    width: 300px;
+}

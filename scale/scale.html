@@ -71,14 +71,14 @@
             } // Layers
             ctx.restore()
 
-            if (camera.visible) {
+            if (visor.visible) {
                 ctx.save()
                 ctx.beginPath()
                 ctx.moveTo(visor.x, 0)
                 ctx.lineTo(visor.x, canvas.height)
                 ctx.moveTo(0, visor.y)
                 ctx.lineTo(canvas.width, visor.y)
-                ctx.strokeStyle = 'red'
+                ctx.strokeStyle = '#FF000030'
                 ctx.lineWidth = 2
                 ctx.stroke()
                 ctx.restore()
@@ -143,18 +143,18 @@
 
             document.getElementById('canvas').addEventListener('mouseenter', event => {
                 window.requestAnimationFrame(draw)
-                camera.visible = true
+                visor.visible = true
             })
 
             document.getElementById('canvas').addEventListener('mouseleave', event => {
                 window.requestAnimationFrame(draw)
-                camera.visible = false
+                visor.visible = false
             })
         }
     </script>
 </head>
 <body>
-<canvas id="canvas" width="1600" height="900"></canvas>
+<canvas id="canvas" width="1024" height="768" style="cursor: grab"></canvas>
 <input id="scale-input" type="range" min="0.1" max="10000" step="0.001" oninput="setScale(this.value)"><span>Schaal</span><br>
 <textarea style="width: 300px; height: 300px"></textarea>
 <textarea style="width: 320px; height: 300px">c -> camera, p -> picture, v -> visor
