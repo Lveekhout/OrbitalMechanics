@@ -18,8 +18,11 @@
             const Ep = m*u/r
             document.getElementById('algemeen1').innerText = `\\[\\frac{1}{2}mv^2 - \\frac{m\\cdot{M}\\cdot{G}}{r}=-\\frac{m\\cdot{M}\\cdot{G}}{2a}\\]`
             document.getElementById('algemeen2').innerText = `\\[\\frac{1}{2}v^2 - \\frac{M\\cdot{G}}{r}=-\\frac{M\\cdot{G}}{2a}\\]`
-            document.getElementById('algemeen3').innerText = `\\[a=-\\frac{M\\cdot{G}}{2(\\frac{1}{2}v^2 - \\frac{M\\cdot{G}}{r})}\\]`
-            document.getElementById('algemeen4').innerText = `\\[a=-\\frac{M\\cdot{G}}{v^2 - \\frac{2\\cdot{M}\\cdot{G}}{r}}\\]`
+            document.getElementById('algemeen3').innerText = `\\[\\Rightarrow 2a=-\\frac{M\\cdot{G}}{\\frac{1}{2}v^2 - \\frac{M\\cdot{G}}{r}}\\]`
+            document.getElementById('algemeen4').innerText = `\\[a=-\\frac{M\\cdot{G}}{2(\\frac{1}{2}v^2 - \\frac{M\\cdot{G}}{r})}\\]`
+            document.getElementById('algemeen5').innerText = `\\[a=-\\frac{M\\cdot{G}}{v^2 - \\frac{2\\cdot{M}\\cdot{G}}{r}}\\]`
+            document.getElementById('algemeen6').innerText = `\\[\\Rightarrow v=\\pm\\sqrt{2\\left(\\frac{\\mu}{r}-\\frac{\\mu}{2a}\\right)}\\]`
+            document.getElementById('algemeen7').innerText = `\\[\\Rightarrow r=\\frac{\\mu}{\\frac{\\mu}{2a}+\\frac{1}{2}v^2}\\]`
             document.getElementById('ek').innerText = `\\[E_k=\\frac{1}{2}mv^2=\\frac{1}{2}\\cdot${m}\\cdot${v}^2=${Ek}\\]`
             document.getElementById('ep').innerText = `\\[E_p=\\frac{m\\mu}{r}=\\frac{${m}\\cdot${u}}{${r}}=${Ep}\\]`
             document.getElementById('etot').innerText = `\\[E_{tot}=${Ek - Ep}\\]`
@@ -38,6 +41,9 @@
 <div id="algemeen2"></div>
 <div id="algemeen3"></div>
 <div id="algemeen4"></div>
+<div id="algemeen5"></div>
+<div id="algemeen6"></div>
+<div id="algemeen7"></div>
 <hr>
 <div id="ek"></div>
 <div id="ep"></div>
