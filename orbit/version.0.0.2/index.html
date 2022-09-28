@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Orbital Mechanics</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script src="./js/EarthOrbit.js"></script>
+    <script src="../../lib/Vector.js"></script>
+    <script src="./js/kruisproduct.js"></script>
+    <script src="./js/index.js"></script>
+</head>
+<body>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+        <td>
+            <canvas id="canvas" width="1024" height="768" style="display: inline-block; cursor: grab"></canvas>
+        </td>
+        <td style="width: 100%; vertical-align: top">
+            <div style="
+            display: block;
+            /*display: none;*/
+            font-family: 'Courier New';
+            background-color: darkseagreen;
+            padding: 10px;">
+                <p id="p001">Initializing....</p>
+                <p id="p002">Initializing....</p>
+                <p id="p003">Initializing....</p>
+                <textarea id="text001" style="width: 100%; min-height: 512px;"></textarea>
+            </div>
+            <input type="range" min="0" max="6.28" value="1.57" step="0.01" style="display: block">
+            <input type="range" min="0" max="15000" value="9800" step="1" style="display: block">
+            <input type="range" min="0" max="6.28" value="0" step="0.01" style="display: block">
+            <input type="range" min="6378000" max="29378000" value="7778000" step="1" style="display: block">
+            <input type="range" min="0" max="6.28" value="0" step="0.001" style="display: block">
+            <button onclick="start()">start</button>
+            <button onclick="stop()">stop</button>
+        </td>
+    </tr>
+</table>
+<a style="position: fixed; left: 0; bottom: 0; padding: 20px; background-color: #ffefbe" href="https://docs.google.com/document/d/1FG5P-CsW2sZV-OpytFqXbFs9QBsQdB7q2y2d7OjNlrs/edit?usp=sharing">Orbital Mechanics Google Docs</a>
+</body>
+</html>
