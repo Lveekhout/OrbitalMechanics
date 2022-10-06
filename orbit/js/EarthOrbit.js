@@ -8,22 +8,22 @@ function EarthOrbit(vr, vv, color) { // Array, Array, String
     const mu = M * G // https://nl.wikipedia.org/wiki/Gravitatieconstante
 
     const r1 = new Vector(vr)
-    const m = new Vector(vr, vv)
-    const a = -mu / (m.length * m.length - 2 * mu / r1.length)
-    const a2 = a * 2
-    const L = m.o[0] * m.p[1] - m.o[1] * m.p[0]
-    const T = 2 * Math.PI * Math.sqrt(Math.pow(a, 3) / mu)
+    const m = new Vector(r1.p, vv)
+    // const m = { x: 3, y: 4, l: 5, a: Math.PI / 2 }
+    let a = -mu / (m.length * m.length - 2 * mu / r1.length)
+    let T = 2 * Math.PI * Math.sqrt(Math.pow(a, 3) / mu)
 
-    const r2 = new Vector(vr, a2 - r1.length, m.angle * 2 - r1.angle)
-    const o = new Vector([(r2.p[0] + vr[0]) / 2, (r2.p[1] + vr[1]) / 2])
-    const b = Math.sqrt(Math.pow(a, 2) - Math.pow(o.length, 2))
-    const c = o.length //Math.sqrt(Math.pow(a, 2) - Math.pow(b, 2))
-    const e = c / a
+    const r2 = new Vector(r1.p, 2 * a - r1.length, m.angle * 2 - r1.angle)
+    const o = new Vector([(r2.p[0] + r1.p[0]) / 2, (r2.p[1] + r1.p[1]) / 2])
+    let b = Math.sqrt(Math.pow(a, 2) - Math.pow(o.length, 2))
+    let c = o.length //Math.sqrt(Math.pow(a, 2) - Math.pow(b, 2))
+    let e = c / a
 
-    const trueAnomaly = r1.angle - (o.angle - Math.PI)
-    const E = 2 * Math.atan(Math.sqrt((1 - e) / (1 + e)) * Math.tan(trueAnomaly / 2)) // (10b)
-    const Me = E - e * Math.sin(E) // (11)
-    const t = Me / (Math.PI * 2) * T
+    let trueAnomaly = r1.angle - (o.angle - Math.PI)
+    let E = 2 * Math.atan(Math.sqrt((1 - e) / (1 + e)) * Math.tan(trueAnomaly / 2)) // (10b)
+    let Me = E - e * Math.sin(E) // (11)
+    let t = Me / (Math.PI * 2) * T
+    let L = m.o[0] * m.p[1] - m.o[1] * m.p[0]
 
     this.draw = ctx => {
         ctx.save()
@@ -43,7 +43,7 @@ function EarthOrbit(vr, vv, color) { // Array, Array, String
         //     new Vector(o.p, a, Math.atan2(-o.p[1], -o.p[0])).draw(ctx, 6, 'orange')
         //
         //     r2.draw(ctx, 6, 'white')
-        //     r1.draw(ctx, 6, 'white')
+            r1.draw(ctx, 6, 'white')
         //     ctx.restore()
         // }
 
@@ -52,29 +52,137 @@ function EarthOrbit(vr, vv, color) { // Array, Array, String
         // new Vector(o.p, a, Me + o.angle - Math.PI).draw(ctx, 6, 'white')
     }
 
-    this.copyOrbitFromTrueAnomaly = trueAnomaly => {
-        const realAngle = trueAnomaly + (o.angle - Math.PI)
-        // const nafstand = L * (L / mu) / (1 + e * Math.cos(newTrueAnomaly))
-        const nafstand = a * (1 - Math.pow(e, 2)) / (1 + e * Math.cos(trueAnomaly)) // 2:32 minuut https://www.youtube.com/watch?v=Am7EwmxBAW8&t=1285s
-        const vr1 = new Vector(nafstand, realAngle)
-        const vr2 = new Vector(vr1.p, [r2.o[0] + r2.p[0] - vr1.p[0], r2.o[1] + r2.p[1] - vr1.p[1]])
-        const lv = Math.sqrt(2 * (mu / vr1.length - mu / a2))
-        const av = bepHoek(vr1.angle, vr2.angle)
-
-        return new EarthOrbit(vr1.p, new Vector(lv, av).p, 'purple')
+    this.setAngleOfVelocity = angle => {
+        m.angle = angle
+        m.p[0] = Math.cos(m.angle) * m.length
+        m.p[1] = Math.sin(m.angle) * m.length
+        r2.angle = m.angle * 2 - r1.angle
+        r2.p[0] = Math.cos(r2.angle) * r2.length
+        r2.p[1] = Math.sin(r2.angle) * r2.length
+        o.p[0] = (r2.p[0] + r1.p[0]) / 2
+        o.p[1] = (r2.p[1] + r1.p[1]) / 2
+        o.length = Math.sqrt(Math.pow(o.p[0], 2) + Math.pow(o.p[1], 2))
+        o.angle = Math.atan2(o.p[1], o.p[0])
+        b = Math.sqrt(Math.pow(a, 2) - Math.pow(o.length, 2))
+        c = o.length
+        e = c / a
+        trueAnomaly = r1.angle - (o.angle - Math.PI)
+        E = 2 * Math.atan(Math.sqrt((1 - e) / (1 + e)) * Math.tan(trueAnomaly / 2)) // (10b)
+        Me = E - e * Math.sin(E) // (11)
+        t = Me / (Math.PI * 2) * T
+        L = m.o[0] * m.p[1] - m.o[1] * m.p[0]
     }
 
-    this.copyOrbitFromRealAngle = realAngle => {
-        return this.copyOrbitFromTrueAnomaly(realAngle - (o.angle - Math.PI))
+    this.setLengthOfVelocity = length => {
+        m.length = length
+        m.p[0] = Math.cos(m.angle) * m.length
+        m.p[1] = Math.sin(m.angle) * m.length
+        a = -mu / (m.length * m.length - 2 * mu / r1.length)
+        T = 2 * Math.PI * Math.sqrt(Math.pow(a, 3) / mu)
+        r2.length = 2 * a - r1.length
+        r2.p[0] = Math.cos(r2.angle) * r2.length
+        r2.p[1] = Math.sin(r2.angle) * r2.length
+        o.p[0] = (r2.p[0] + r1.p[0]) / 2
+        o.p[1] = (r2.p[1] + r1.p[1]) / 2
+        o.length = Math.sqrt(Math.pow(o.p[0], 2) + Math.pow(o.p[1], 2))
+        o.angle = Math.atan2(o.p[1], o.p[0])
+        b = Math.sqrt(Math.pow(a, 2) - Math.pow(o.length, 2))
+        c = o.length //Math.sqrt(Math.pow(a, 2) - Math.pow(b, 2))
+        e = c / a
+        trueAnomaly = r1.angle - (o.angle - Math.PI)
+        E = 2 * Math.atan(Math.sqrt((1 - e) / (1 + e)) * Math.tan(trueAnomaly / 2)) // (10b)
+        Me = E - e * Math.sin(E) // (11)
+        t = Me / (Math.PI * 2) * T
+        L = m.o[0] * m.p[1] - m.o[1] * m.p[0]
     }
 
-    this.copyOrbitFromDeltaSeconds = deltaSeconds => {
-        const newTime = L < 0 ? t - deltaSeconds : t + deltaSeconds
-        const Me = newTime * Math.PI * 2 / T
-        const E = newtonsMethod(Me, e)
-        const trueAnomaly = 2 * Math.atan(Math.sqrt((1 + e) / (1 - e)) * Math.tan(E / 2)) // (27:26 minuut filmpje)
+    this.setAngleOfMass = angle => {
+        r1.angle = angle
+        r1.p[0] = Math.cos(r1.angle) * r1.length
+        r1.p[1] = Math.sin(r1.angle) * r1.length
+        // m.o = r1.p // Gebeurt impliciet
+        r2.angle = m.angle * 2 - r1.angle
+        // r2.o = r1.p // Gebeurt impliciet
+        r2.p[0] = Math.cos(r2.angle) * r2.length
+        r2.p[1] = Math.sin(r2.angle) * r2.length
+        o.p[0] = (r2.p[0] + r1.p[0]) / 2
+        o.p[1] = (r2.p[1] + r1.p[1]) / 2
+        o.length = Math.sqrt(Math.pow(o.p[0], 2) + Math.pow(o.p[1], 2))
+        o.angle = Math.atan2(o.p[1], o.p[0])
+        b = Math.sqrt(Math.pow(a, 2) - Math.pow(o.length, 2))
+        c = o.length
+        e = c / a
+        trueAnomaly = r1.angle - (o.angle - Math.PI)
+        E = 2 * Math.atan(Math.sqrt((1 - e) / (1 + e)) * Math.tan(trueAnomaly / 2)) // (10b)
+        Me = E - e * Math.sin(E) // (11)
+        t = Me / (Math.PI * 2) * T
+        L = m.o[0] * m.p[1] - m.o[1] * m.p[0]
+    }
 
-        return this.copyOrbitFromTrueAnomaly(trueAnomaly)
+    this.setLengthOfMass = length => {
+        r1.length = length
+        r1.p[0] = Math.cos(r1.angle) * r1.length
+        r1.p[1] = Math.sin(r1.angle) * r1.length
+        // m.o = r1.p // Gebeurt impliciet
+        a = -mu / (m.length * m.length - 2 * mu / r1.length)
+        T = 2 * Math.PI * Math.sqrt(Math.pow(a, 3) / mu)
+        r2.length = 2 * a - r1.length
+        // r2.o = r1.p // Gebeurt impliciet
+        r2.p[0] = Math.cos(r2.angle) * r2.length
+        r2.p[1] = Math.sin(r2.angle) * r2.length
+        o.p[0] = (r2.p[0] + r1.p[0]) / 2
+        o.p[1] = (r2.p[1] + r1.p[1]) / 2
+        o.length = Math.sqrt(Math.pow(o.p[0], 2) + Math.pow(o.p[1], 2))
+        o.angle = Math.atan2(o.p[1], o.p[0])
+        b = Math.sqrt(Math.pow(a, 2) - Math.pow(o.length, 2))
+        c = o.length
+        e = c / a
+        trueAnomaly = r1.angle - (o.angle - Math.PI)
+        E = 2 * Math.atan(Math.sqrt((1 - e) / (1 + e)) * Math.tan(trueAnomaly / 2)) // (10b)
+        Me = E - e * Math.sin(E) // (11)
+        t = Me / (Math.PI * 2) * T
+        L = m.o[0] * m.p[1] - m.o[1] * m.p[0]
+    }
+
+    this.setCartesianAngle = angle => this.setTrueAnomaly(angle - (o.angle - Math.PI))
+
+    this.setTrueAnomaly = angle => {
+        trueAnomaly = angle
+        E = 2 * Math.atan(Math.sqrt((1 - e) / (1 + e)) * Math.tan(trueAnomaly / 2)) // (10b)
+        Me = E - e * Math.sin(E) // (11)
+        t = Me / (Math.PI * 2) * T
+        // r1.length = L * (L / mu) / (1 + e * Math.cos(newTrueAnomaly))
+        r1.length = a * (1 - Math.pow(e, 2)) / (1 + e * Math.cos(trueAnomaly)) // 2:32 minuut https://www.youtube.com/watch?v=Am7EwmxBAW8&t=1285s
+        r1.angle = trueAnomaly + (o.angle - Math.PI)
+        r1.p[0] = Math.cos(r1.angle) * r1.length
+        r1.p[1] = Math.sin(r1.angle) * r1.length
+        r2.p[0] = o.p[0] * 2 - r1.p[0]
+        r2.p[1] = o.p[1] * 2 - r1.p[1]
+        r2.length = Math.sqrt(Math.pow(r2.p[0], 2) + Math.pow(r2.p[1], 2))
+        r2.angle = Math.atan2(r2.p[1], r2.p[0])
+        m.length = Math.sqrt(2 * (mu / r1.length - mu / (2 * a)))
+        m.angle = bepHoek(r1.angle, r2.angle)
+        m.p[0] = Math.cos(m.angle) * m.length
+        m.p[1] = Math.sin(m.angle) * m.length
+    }
+
+    this.setDeltaSeconds = ds => {
+        t = L < 0 ? t - ds : t + ds
+        Me = t * Math.PI * 2 / T
+        E = newtonsMethod(Me, e)
+        trueAnomaly = 2 * Math.atan(Math.sqrt((1 + e) / (1 - e)) * Math.tan(E / 2)) // (27:26 minuut filmpje)
+        r1.length = a * (1 - Math.pow(e, 2)) / (1 + e * Math.cos(trueAnomaly)) // 2:32 minuut https://www.youtube.com/watch?v=Am7EwmxBAW8&t=1285s
+        r1.angle = trueAnomaly + (o.angle - Math.PI)
+        r1.p[0] = Math.cos(r1.angle) * r1.length
+        r1.p[1] = Math.sin(r1.angle) * r1.length
+        r2.p[0] = o.p[0] * 2 - r1.p[0]
+        r2.p[1] = o.p[1] * 2 - r1.p[1]
+        r2.length = Math.sqrt(Math.pow(r2.p[0], 2) + Math.pow(r2.p[1], 2))
+        r2.angle = Math.atan2(r2.p[1], r2.p[0])
+        m.length = Math.sqrt(2 * (mu / r1.length - mu / (2 * a)))
+        m.angle = bepHoek(r1.angle, r2.angle)
+        m.p[0] = Math.cos(m.angle) * m.length
+        m.p[1] = Math.sin(m.angle) * m.length
     }
 
     this.info = () => {
@@ -85,7 +193,7 @@ function EarthOrbit(vr, vv, color) { // Array, Array, String
             e: e,
             m: m.info(),
             r1: r1.info(),
-            r: L * (L / mu) / (1 + e * Math.cos(trueAnomaly)),
+            h: r1.length - 6378e3,
             r2: r2.info(),
             o: o,
             trueAnomaly: trueAnomaly,
