@@ -80,11 +80,14 @@ const draw = ms => {
             const r1 = new Vector(Number(length), Number(angle))
             const r2 = new Vector(r1.p, [-6 - r1.p[0], 0 - r1.p[1]])
             const r1_ = new Vector(r1.p, Number(length), Number(angle))
-            const m = new Vector(r1.p, 5, bepHoek(r1.angle, r2.angle))
+            const r2_ = new Vector([r1_.o[0] + r1_.p[0], r1_.o[1] + r1_.p[1]], r1.length, r2.angle)
+            // const m = new Vector(r1.p, 5, bepHoek(r1.angle, r2.angle))
+            const m = new Vector(r1.p, 5, bepHoek2(r1.p, new Vector(r1.p, r1.length, r2.angle).p))
 
             r1.draw(ctx, 6, 'blue')
             r2.draw(ctx, 6, 'blue')
             r1_.draw(ctx, 6, '#ddd8')
+            r2_.draw(ctx, 6, '#ddd8')
             m.draw(ctx, 6, 'green')
         }
     } // Layers
@@ -126,7 +129,11 @@ const getView = () => {
     }
 }
 
-function bepHoek(a, b) {
+function bepHoek2(a, b) { // Array(2), Array(2)
+    return Math.atan2(a[1] + b[1], a[0] + b[0])
+}
+
+function bepHoek(a, b) { // Number, Number
     let result
     a = Math.atan2(Math.sin(a), Math.cos(a))
     // b = Math.atan2(Math.sin(b), Math.cos(b))
