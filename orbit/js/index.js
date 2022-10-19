@@ -1,16 +1,13 @@
-const camera = {x: 800, y: 384, scale: 1 / 37000}
+const camera = {x: 1024 / 2, y: 768 / 2, scale: 1 / 37000}
 const visor = {x: null, y: null, visible: false}
-const orbit = new EarthOrbit(new Vector(6378e3 + 1400e3, 0).p, new Vector(9800, Math.PI * (1/2)).p)
-let orbits = [
+const orbit = new EarthOrbit(new Vector(6378e3 + 1400e3, 0).p, new Vector(7158.493487102268, Math.PI * (1/2)).p)
+const orbits = [
     orbit,
-    // new EarthOrbit(new Vector(6378e3 + 400e3, Math.PI / 2).p, new Vector(7650, Math.PI).p),
-    // orbit,
-    // orbit.copy(Math.PI / .3),
-    // new EarthOrbit(new Vector(6378e3 + 8200e3, Math.PI * 1.5).p, new Vector(6945, 0.72 + Math.PI).p),
-    // new Orbit([Math.cos(Math.PI / 3) * orbit.info().a + orbit.info().o.p[0], Math.sin(Math.PI / 3) * orbit.info().b], new Vector(7450, 2.64).p),
-    // new EarthOrbit(new Vector(6378e3 + 400e3, Math.PI / 2).p, new Vector(7650, 0).p),
-    // new Orbit(new Vector(6378e3 + 400e3, 0).p, new Vector(7650, 1.5 * Math.PI).p),
-    // new EarthOrbit(new Vector(9000000, Math.PI / 4).p, new Vector(6650, Math.PI * (3 / 4)).p, '#ff8080')
+    orbit.copy().setCartesianAngle(0.01),
+    // new EarthOrbit(new Vector(6378e3 + 35785280.291919015, 0).p, new Vector(3074.5984777015988, Math.PI * (1/2)).p), // Geosynchronous orbit
+    // new EarthOrbit(new Vector(6378e3 + 433e3, 0).p, new Vector(7652.7777777, Math.PI * (1/2)).p), // ISS orbit
+    // new EarthOrbit(new Vector(6378e3 + 2800e3, 0).p, new Vector(3000, Math.PI * (1 / 2)).p) // r=a (a=14775947.678937579)
+    // new EarthOrbit(new Vector(6378e3 + 165e3, 0).p, new Vector(27337 / 3.6, Math.PI * (1 / 2)).p) // r=a (a=14775947.678937579)
 ]
 let cms // current miliseconds
 let animating = false
@@ -18,10 +15,11 @@ let tijden = [0, 0]
 let maxDms = 0
 
 window.onload = e => {
-    window.requestAnimationFrame(draw)
+    window.requestAnimationFrame(() => draw(0))
+    updateRangeInputsFromOrbit(orbits[0])
 
     document.getElementById('canvas').addEventListener('mousemove', event => {
-        window.requestAnimationFrame(draw)
+        if (!animating) window.requestAnimationFrame(() => draw(0))
         event.preventDefault()
 
         visor.x = event.offsetX
@@ -38,7 +36,7 @@ window.onload = e => {
     })
 
     document.getElementById('canvas').addEventListener('mousewheel', event => {
-        window.requestAnimationFrame(draw)
+        if (!animating) window.requestAnimationFrame(() => draw(0))
         event.preventDefault()
 
         const scaleBefore = camera.scale
@@ -52,62 +50,49 @@ window.onload = e => {
     })
 
     document.getElementById('canvas').addEventListener('mouseenter', () => {
-        window.requestAnimationFrame(draw)
+        if (!animating) window.requestAnimationFrame(() => draw(0))
         visor.visible = true
     })
 
     document.getElementById('canvas').addEventListener('mouseleave', () => {
-        window.requestAnimationFrame(draw)
+        if (!animating) window.requestAnimationFrame(() => draw(0))
         visor.visible = false
     })
 
     document.getElementsByTagName('input')[0].oninput = e => {
+        if (!animating) window.requestAnimationFrame(() => draw(0))
         orbits[0].setAngleOfVelocity(Number(e.target.value))
-        window.requestAnimationFrame(draw)
     }
 
     document.getElementsByTagName('input')[1].oninput = e => {
+        if (!animating) window.requestAnimationFrame(() => draw(0))
         orbits[0].setLengthOfVelocity(Number(e.target.value))
-        window.requestAnimationFrame(draw)
     }
 
     document.getElementsByTagName('input')[2].oninput = e => {
+        if (!animating) window.requestAnimationFrame(() => draw(0))
         document.getElementsByTagName('input')[4].value = e.target.value
         orbits[0].setAngleOfMass(Number(e.target.value))
-        window.requestAnimationFrame(draw)
     }
 
     document.getElementsByTagName('input')[3].oninput = e => {
+        if (!animating) window.requestAnimationFrame(() => draw(0))
         orbits[0].setLengthOfMass(Number(e.target.value))
-        window.requestAnimationFrame(draw)
     }
 
     document.getElementsByTagName('input')[4].oninput = e => {
+        if (!animating) window.requestAnimationFrame(() => draw(0))
         orbits[0].setCartesianAngle(Number(e.target.value))
-        const newInfo = orbits[0].info()
-        document.getElementsByTagName('input')[0].value = (newInfo.m.angle + Math.PI * 2) % (Math.PI * 2)
-        document.getElementsByTagName('input')[1].value = newInfo.m.length
-        document.getElementsByTagName('input')[2].value = e.target.value
-        document.getElementsByTagName('input')[3].value = newInfo.r1.length
-        window.requestAnimationFrame(draw)
+        updateRangeInputsFromOrbit(orbits[0])
     }
 }
 
+let earthrotation = 0
 const draw = dms => { // delta miliseconds
     const canvas = document.getElementById('canvas')
     const ctx = canvas.getContext('2d')
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-    // ctx.save()
-    // ctx.translate(400, 300)
-    // ctx.rotate(-Number(document.getElementsByTagName('input')[4].value))
-    // ctx.beginPath()
-    // ctx.moveTo(-100, 0)
-    // ctx.lineTo(100, 0)
-    // ctx.strokeStyle = 'white'
-    // ctx.stroke()
-    // ctx.restore()
 
     {
         ctx.save()
@@ -119,6 +104,8 @@ const draw = dms => { // delta miliseconds
                 ctx.save()
                 // ctx.globalAlpha = .3
                 ctx.scale(6378e3 / 1638 * 2, 6378e3 / 1638 * 2)
+                earthrotation -= 2 * Math.PI * dms / 86184
+                // ctx.rotate(earthrotation)
                 ctx.translate(-iEarth.width / 2, -iEarth.height / 2)
                 ctx.drawImage(iEarth, 0, 0)
                 ctx.restore()
@@ -172,22 +159,29 @@ const getView = () => {
 //////////////////////////////////////////////////////////////////////////////////////////
 // ANIMATION                                                                            //
 //////////////////////////////////////////////////////////////////////////////////////////
-
-const deltadraw = ms => {
-    const dms = ms - cms
-    cms = ms
-    maxDms = Math.max(maxDms, dms)
-    const start = performance.now() * 1000
-    orbits.forEach(orb => orb.setDeltaSeconds(dms))
-    tijden[0] += performance.now() * 1000 - start
-    tijden[1]++
-    const newInfo = orbits[0].info()
+const updateRangeInputsFromOrbit = orbit => {
+    const newInfo = orbit.info()
     document.getElementsByTagName('input')[0].value = (newInfo.m.angle + Math.PI * 2) % (Math.PI * 2)
     document.getElementsByTagName('input')[1].value = newInfo.m.length
     document.getElementsByTagName('input')[2].value = (newInfo.r1.angle + Math.PI * 2) % (Math.PI * 2)
     document.getElementsByTagName('input')[3].value = newInfo.r1.length
     document.getElementsByTagName('input')[4].value = (newInfo.r1.angle + Math.PI * 2) % (Math.PI * 2)
-    draw()
+}
+
+const deltadraw = ms => {
+    const dms = ms - cms
+    cms = ms
+    maxDms = Math.max(maxDms, dms)
+    if (navigator.getGamepads()[0]) {
+        if (navigator.getGamepads()[0].buttons[4].value === 1) orbits[0].setAccelerationOfVelocity(-dms / 1)
+        if (navigator.getGamepads()[0].buttons[5].value === 1) orbits[0].setAccelerationOfVelocity(dms / 1)
+    }
+    orbits.forEach(orb => orb.setDeltaSeconds(dms / 1))
+    updateRangeInputsFromOrbit(orbits[0])
+    const start = performance.now() * 1000                   // Tijdmeting
+    draw(dms)
+    tijden[0] += performance.now() * 1000 - start            // Tijdmeting
+    tijden[1]++                                              // Tijdmeting
     if (animating) window.requestAnimationFrame(deltadraw)
 }
 
@@ -197,8 +191,10 @@ const init = ms => {
 }
 
 const start = () => {
-    animating = true
-    window.requestAnimationFrame(init)
+    if (!animating) {
+        animating = true
+        window.requestAnimationFrame(init)
+    }
 }
 
 const stop = () => {

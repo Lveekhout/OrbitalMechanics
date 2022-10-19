@@ -1,6 +1,14 @@
 const iEarth = new Image()
 iEarth.src = 'https://i.pinimg.com/originals/07/8a/b5/078ab50f97a4a8031c9a11b17324f22c.png' // 2048x2048 (1638x1638)
 
+EarthOrbit.createCircularOrbit = (vr, color) => {
+    const M = 5.972e24 // https://en.wikipedia.org/wiki/Earth_mass
+    const G = 6.67408e-11
+    const mu = M * G // https://nl.wikipedia.org/wiki/Gravitatieconstante
+    const v = Math.sqrt(mu / Math.sqrt(Math.pow(vr[0], 2) + Math.pow(vr[1], 2)))
+    return new EarthOrbit(vr, new Vector(v, Math.atan2(vr[1], vr[0]) + Math.PI / 2).p, color)
+}
+
 function EarthOrbit(vr, vv, color) { // Array, Array, String
     if (!color) color = 'yellow'
     const M = 5.972e24 // https://en.wikipedia.org/wiki/Earth_mass
@@ -29,11 +37,13 @@ function EarthOrbit(vr, vv, color) { // Array, Array, String
         ctx.save()
         ctx.beginPath()
         ctx.ellipse(o.p[0], -o.p[1], a, b, -o.angle, 0, Math.PI * 2)
-        // ctx.arc(o.p[0], -o.p[1], a, 0, Math.PI * 2)
         ctx.globalAlpha = .5
         ctx.lineWidth = 2 / camera.scale
         ctx.strokeStyle = color
         ctx.stroke()
+        // ctx.beginPath()
+        // ctx.arc(o.p[0], -o.p[1], a, 0, Math.PI * 2)
+        // ctx.stroke()
         ctx.restore()
 
         // {
@@ -41,16 +51,17 @@ function EarthOrbit(vr, vv, color) { // Array, Array, String
         //     ctx.globalAlpha = .3
         //     new Vector(o.p, a, Math.atan2(o.p[1], o.p[0])).draw(ctx, 6, 'blue')
         //     new Vector(o.p, a, Math.atan2(-o.p[1], -o.p[0])).draw(ctx, 6, 'orange')
-        //
-        //     r2.draw(ctx, 6, 'white')
-            r1.draw(ctx, 6, 'white')
         //     ctx.restore()
         // }
 
         m.draw(ctx, 6, 'green', 256)
+        // r2.draw(ctx, 6, 'white')
+        // r1.draw(ctx, 6, 'white')
         // new Vector(o.p, a, E + o.angle - Math.PI).draw(ctx, 6, 'red')
         // new Vector(o.p, a, Me + o.angle - Math.PI).draw(ctx, 6, 'white')
     }
+
+    this.copy = () => new EarthOrbit([r1.p[0], r1.p[1]], [m.p[0], m.p[1]])
 
     this.setAngleOfVelocity = angle => {
         m.angle = angle
@@ -144,7 +155,10 @@ function EarthOrbit(vr, vv, color) { // Array, Array, String
         L = m.o[0] * m.p[1] - m.o[1] * m.p[0]
     }
 
-    this.setCartesianAngle = angle => this.setTrueAnomaly(angle - (o.angle - Math.PI))
+    this.setCartesianAngle = angle => {
+        this.setTrueAnomaly(angle - (o.angle - Math.PI))
+        return this
+    }
 
     this.setTrueAnomaly = angle => {
         trueAnomaly = angle
@@ -167,7 +181,7 @@ function EarthOrbit(vr, vv, color) { // Array, Array, String
     }
 
     this.setDeltaSeconds = ds => {
-        t = L < 0 ? t - ds : t + ds
+        t = (L < 0 ? t - ds : t + ds) % T
         Me = t * Math.PI * 2 / T
         E = newtonsMethod(Me, e)
         trueAnomaly = 2 * Math.atan(Math.sqrt((1 + e) / (1 - e)) * Math.tan(E / 2)) // (27:26 minuut filmpje)
@@ -183,6 +197,10 @@ function EarthOrbit(vr, vv, color) { // Array, Array, String
         m.angle = bepHoek(r1.angle, r2.angle)
         m.p[0] = Math.cos(m.angle) * m.length
         m.p[1] = Math.sin(m.angle) * m.length
+    }
+
+    this.setAccelerationOfVelocity = ds => {
+        this.setLengthOfVelocity(m.length + 1 * ds) // m/s/s
     }
 
     this.info = () => {
@@ -229,7 +247,7 @@ function EarthOrbit(vr, vv, color) { // Array, Array, String
     const newtonsMethod = (Me, e) => {
         let cE = Me
         let nE = cE - ((Me - cE + e * Math.sin(cE)) / (-1 + e * Math.cos(cE)))
-        while (Math.abs(cE-nE) > 1e-6) {
+        while (Math.abs(cE - nE) > 1e-6) {
             cE = nE
             nE = cE - ((Me - cE + e * Math.sin(cE)) / (-1 + e * Math.cos(cE)))
         }
