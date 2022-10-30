@@ -105,7 +105,7 @@ const draw = dms => { // delta miliseconds
                 // ctx.globalAlpha = .3
                 ctx.scale(6378e3 / 1638 * 2, 6378e3 / 1638 * 2)
                 earthrotation -= 2 * Math.PI * dms / 86184
-                // ctx.rotate(earthrotation)
+                ctx.rotate(earthrotation)
                 ctx.translate(-iEarth.width / 2, -iEarth.height / 2)
                 ctx.drawImage(iEarth, 0, 0)
                 ctx.restore()
@@ -179,7 +179,7 @@ const deltadraw = ms => {
     orbits.forEach(orb => orb.setDeltaSeconds(dms / 1))
     updateRangeInputsFromOrbit(orbits[0])
     const start = performance.now() * 1000                   // Tijdmeting
-    draw(dms)
+    draw(dms / 1)
     tijden[0] += performance.now() * 1000 - start            // Tijdmeting
     tijden[1]++                                              // Tijdmeting
     if (animating) window.requestAnimationFrame(deltadraw)
