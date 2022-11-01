@@ -1,0 +1,11 @@
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+body {
+    margin: 10px auto;
+    max-width: 1024px;
+}
+canvas {
+    background-color: #ccc;
+    cursor: grab;
+}
