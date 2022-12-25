@@ -56,7 +56,7 @@ function EarthOrbit(vr, vv, color) { // Array, Array, String
 
         m.draw(ctx, 6, 'green', 256)
         // r2.draw(ctx, 6, 'white')
-        r1.draw(ctx, 6, 'white')
+        // r1.draw(ctx, 6, 'white')
         // new Vector(o.p, a, E + o.angle - Math.PI).draw(ctx, 6, 'red')
         // new Vector(o.p, a, Me + o.angle - Math.PI).draw(ctx, 6, 'white')
     }
@@ -200,7 +200,7 @@ function EarthOrbit(vr, vv, color) { // Array, Array, String
     }
 
     this.setAccelerationOfVelocity = ds => {
-        this.setLengthOfVelocity(m.length + 1 * ds) // m/s/s
+        this.setLengthOfVelocity(m.length + 10 * ds) // m/s/s
     }
 
     this.info = () => {

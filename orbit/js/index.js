@@ -1,13 +1,16 @@
 const camera = {x: 1024 / 2, y: 768 / 2, scale: 1 / 37000}
 const visor = {x: null, y: null, visible: false}
+const nogGoeieNaamVoorBedenken = 1
 const orbit = new EarthOrbit(new Vector(6378e3 + 1400e3, 0).p, new Vector(7158.493487102268, Math.PI * (1/2)).p)
 const orbits = [
     orbit,
-    orbit.copy().setCartesianAngle(0.01),
+    // orbit.copy().setCartesianAngle(0.01),
     // new EarthOrbit(new Vector(6378e3 + 35785280.291919015, 0).p, new Vector(3074.5984777015988, Math.PI * (1/2)).p), // Geosynchronous orbit
     // new EarthOrbit(new Vector(6378e3 + 433e3, 0).p, new Vector(7652.7777777, Math.PI * (1/2)).p), // ISS orbit
     // new EarthOrbit(new Vector(6378e3 + 2800e3, 0).p, new Vector(3000, Math.PI * (1 / 2)).p) // r=a (a=14775947.678937579)
     // new EarthOrbit(new Vector(6378e3 + 165e3, 0).p, new Vector(27337 / 3.6, Math.PI * (1 / 2)).p) // r=a (a=14775947.678937579)
+    // new EarthOrbit(new Vector(6378e3 + 0, Math.PI * (1 / 2)).p, new Vector(1000 / 36, 1.6).p) // Lancering
+    // new EarthOrbit(new Vector(6378e3 + 4e3, Math.PI * (1 / 2)).p, new Vector(0, 4.7).p) // Vrije val
 ]
 let cms // current miliseconds
 let animating = false
@@ -110,6 +113,14 @@ const draw = dms => { // delta miliseconds
                 ctx.drawImage(iEarth, 0, 0)
                 ctx.restore()
 
+                ctx.save()
+                ctx.beginPath()
+                ctx.arc(0, 0, 6378e3, 0, Math.PI * 2)
+                ctx.strokeStyle = '#BEF3'
+                ctx.lineWidth = 1 / camera.scale
+                ctx.stroke()
+                ctx.restore()
+
                 orbits.forEach(o => o.draw(ctx))
             } // Shape
         } // Layer
@@ -173,13 +184,13 @@ const deltadraw = ms => {
     cms = ms
     maxDms = Math.max(maxDms, dms)
     if (navigator.getGamepads()[0]) {
-        if (navigator.getGamepads()[0].buttons[4].value === 1) orbits[0].setAccelerationOfVelocity(-dms / 1)
-        if (navigator.getGamepads()[0].buttons[5].value === 1) orbits[0].setAccelerationOfVelocity(dms / 1)
+        if (navigator.getGamepads()[0].buttons[4].value === 1) orbits[0].setAccelerationOfVelocity(-dms / nogGoeieNaamVoorBedenken)
+        if (navigator.getGamepads()[0].buttons[5].value === 1) orbits[0].setAccelerationOfVelocity(dms / nogGoeieNaamVoorBedenken)
     }
-    orbits.forEach(orb => orb.setDeltaSeconds(dms / 1))
+    orbits.forEach(orb => orb.setDeltaSeconds(dms / nogGoeieNaamVoorBedenken))
     updateRangeInputsFromOrbit(orbits[0])
     const start = performance.now() * 1000                   // Tijdmeting
-    draw(dms / 1)
+    draw(dms / nogGoeieNaamVoorBedenken)
     tijden[0] += performance.now() * 1000 - start            // Tijdmeting
     tijden[1]++                                              // Tijdmeting
     if (animating) window.requestAnimationFrame(deltadraw)
