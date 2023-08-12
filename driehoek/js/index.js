@@ -1,8 +1,8 @@
-const camera = { x: 512, y: 384, scale: 300 }
+const camera = { x: 512, y: 384, scale: 50 }
 const visor = { x: null, y: null, visible: false }
 
 window.onload = () => {
-    document.getElementById('canvas').getContext('2d').font = '.03pt Courier New'
+    document.getElementById('canvas').getContext('2d').font = '.08pt Courier New'
     document.getElementById('canvas').getContext('2d').textBaseline = 'middle'
     document.getElementById('canvas').getContext('2d').textAlign = 'center'
 
@@ -33,7 +33,6 @@ window.onload = () => {
         }
         doOutput()
     })
-
     document.getElementById('canvas').addEventListener('mousewheel', event => {
         window.requestAnimationFrame(draw)
         event.preventDefault()
@@ -46,5 +45,15 @@ window.onload = () => {
         camera.x = event.offsetX - ((event.offsetX - camera.x) / scaleBefore) * camera.scale
         camera.y = event.offsetY - ((event.offsetY - camera.y) / scaleBefore) * camera.scale
         doOutput()
+    })
+
+    document.querySelectorAll('input[type=checkbox]')[0].addEventListener('input', event => {
+        window.requestAnimationFrame(draw)
+    })
+    document.querySelectorAll('input[type=checkbox]')[1].addEventListener('input', event => {
+        window.requestAnimationFrame(draw)
+    })
+    document.querySelectorAll('input[type=checkbox]')[2].addEventListener('input', event => {
+        window.requestAnimationFrame(draw)
     })
 }
