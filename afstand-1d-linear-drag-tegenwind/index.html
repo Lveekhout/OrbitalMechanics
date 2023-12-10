@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Afstand, snelheid en acceleratie</title>
+    <title>Afstand 1d Linear Drag Met Tegenwind</title>
     <link rel="stylesheet" href="css/index.css">
     <script src="js/index.js"></script>
 </head>
@@ -19,11 +19,14 @@
                 <p id="p003">Initializing....</p>
             </div>
             <div style="font-family: 'Courier New'; display: block; background-color: #a58fa6; padding: 10px">
+                <label id="p004">dt = 1 / 220</label>
                 <input type="range" min="1" max="2500" value="220" autofocus>
-                <p id="p004">dt = 1 / 220</p>
-                <p id="p005">no value yet...</p>
-                <p id="p006">no value yet...</p>
-                <input type="range" min="1" max="4" value="2" step="0.01" autofocus>
+                <label id="p005">b = 0.50</label>
+                <input type="range" min="0" max="1" value="0.5" step="0.01" autofocus>
+                <label id="p006">w = 2.00</label>
+                <input type="range" min="0" max="10" value="2" step="0.01" autofocus>
+                <label id="p007">m = 1.00</label>
+                <input type="range" min="0" max="10" value="1" step="0.01" autofocus>
             </div>
         </td>
     </tr>

@@ -2,8 +2,11 @@ const camera = {x: 1024 / 8, y: 768 / 2, scale: 35}
 const visor = { x: null, y: null, visible: false }
 
 let dt = 1 / 220
-let exp = 2
 const repository = {}
+const v = 10
+let m = 1
+let w = 2
+let b = 1 / 2
 
 window.onload = e => {
     window.requestAnimationFrame(draw)
@@ -52,13 +55,32 @@ window.onload = e => {
     document.querySelectorAll('input[type=range]')[0].addEventListener('input', e => {
         window.requestAnimationFrame(draw)
         dt = 1 / Number(e.target.value)
+        repository.s = generate()
         outputText('p004', `dt = 1 / ${e.target.value}`)
     })
 
     document.querySelectorAll('input[type=range]')[1].addEventListener('input', e => {
         window.requestAnimationFrame(draw)
-        exp = Number(e.target.value)
+        b = Number(e.target.value)
+        outputText('p005', `b = ${b.toFixed(2)}`)
+        repository.s = generate()
     })
+
+    document.querySelectorAll('input[type=range]')[2].addEventListener('input', e => {
+        window.requestAnimationFrame(draw)
+        w = Number(e.target.value)
+        outputText('p006', `w = ${w.toFixed(2)}`)
+        repository.s = generate()
+    })
+
+    document.querySelectorAll('input[type=range]')[3].addEventListener('input', e => {
+        window.requestAnimationFrame(draw)
+        m = Number(e.target.value)
+        outputText('p007', `m = ${m.toFixed(2)}`)
+        repository.s = generate()
+    })
+
+    repository.s = generate()
 }
 
 const draw = ms => {
@@ -99,51 +121,26 @@ const draw = ms => {
 
             ctx.restore()
         } // Raster
+
         {
             ctx.save()
             ctx.lineWidth = 1 / camera.scale
 
-            repository.r = []; repository.v = []; repository.a = []
-
-            let GM = 20
-            let r = 10
-            let v = 0 // 1.8
-            let a = -GM / Math.pow(r, exp)
-            let t = 0
-            repository.r.push([t, r]); repository.v.push([t, v]); repository.a.push([t, a]);
-            while (r >= 0) {
-                ctx.beginPath()
-                ctx.arc(t, -r, 3 / camera.scale, 0, Math.PI * 2)
+            {
                 ctx.fillStyle = 'red'
-                ctx.fill()
-                ctx.beginPath()
-                ctx.arc(t, -v, 3 / camera.scale, 0, Math.PI * 2)
-                ctx.fillStyle = 'brown'
-                ctx.fill()
-                ctx.beginPath()
-                ctx.arc(t, -a, 3 / camera.scale, 0, Math.PI * 2)
-                ctx.fillStyle = 'green'
-                ctx.fill()
-                v += a * dt
-                r += v * dt
-                a = -GM / Math.pow(r, exp)
-                t += dt
-                repository.r.push([t, r]); repository.v.push([t, v]); repository.a.push([t, a]);
-            }
-            outputText('p005', `t = ${t}`)
-            ctx.beginPath()
-            // {
-            //     ctx.ellipse(0, 0, Math.sqrt(Math.pow(10, 4) / GM), 10, 0, 0, -Math.PI / 2, true)
-            //     ctx.strokeStyle = 'blue'
-            //     ctx.stroke()
-            // }
+                repository.s.forEach(e => {
+                    ctx.beginPath()
+                    ctx.arc(e[0], -e[1], 3 / camera.scale, 0, Math.PI * 2)
+                    ctx.fill()
+                })
+            } // Benaderde waarde
 
             {
-                // const dx = 5 / camera.scale
+                // https://www.desmos.com/calculator/ojgg62opno
                 let toggle = false
                 ctx.beginPath()
                 for (let x = view.x1; x <= view.x2; x += 1 / camera.scale) {
-                    const y = Math.sqrt(100 - GM * Math.pow(x, 2) / 100)
+                    const y = v * m / b * (1 - Math.pow(Math.E, -b / m * x))
                     if (Number.isFinite(y)) {
                         if (!toggle) {
                             ctx.moveTo(x, -y)
@@ -154,25 +151,8 @@ const draw = ms => {
                 }
                 ctx.strokeStyle = 'purple'
                 ctx.stroke()
-            }
+            } // Grafiek
 
-            // {
-            //     // const dx = 5 / camera.scale
-            //     let toggle = false
-            //     ctx.beginPath()
-            //     for (let x = view.x1; x <= view.x2; x += 1 / camera.scale) {
-            //         const y = -GM / Math.pow(Math.pow(10, 2) - GM * Math.pow(x, 2) / Math.pow(10, 2), 3 / 2)
-            //         if (Number.isFinite(y)) {
-            //             if (!toggle) {
-            //                 ctx.moveTo(x, -y)
-            //                 toggle = true
-            //             }
-            //             else ctx.lineTo(x, -y)
-            //         } else toggle = false
-            //     }
-            //     ctx.strokeStyle = 'purple'
-            //     ctx.stroke()
-            // }
             ctx.restore()
         }
     } // Layers
@@ -190,7 +170,6 @@ const doOutput = () => {
     outputText('p001', `afbeelding: (${afbeelding.x.toFixed(2)}, ${afbeelding.y.toFixed(2)})`)
     outputText('p002', `camera: (${camera.x.toFixed(2)}, ${camera.y.toFixed(2)}) - ${camera.scale.toFixed(2)}`)
     outputText('p003', `view: (${view.x1.toFixed(2)}, ${view.y1.toFixed(2)}) - (${view.x2.toFixed(2)}, ${view.y2.toFixed(2)})`)
-    outputText('p006', `${canvas.width / camera.scale}`)
 }
 
 const getView = () => {
@@ -201,4 +180,25 @@ const getView = () => {
         x2: (canvas.width - camera.x) / camera.scale,
         y2: (canvas.height - camera.y) / camera.scale
     }
+}
+
+const generate = () => {
+    const result = []
+
+    let idx = 0
+    let t = 0
+    const time = 60 // seconden
+    let s = 0
+    let v_ = v
+    let a = -b * v_ / m - w
+    while (t < time) {
+        if (idx++ % 10 === 0) result.push([t, s])
+
+        v_ += a * dt
+        s += v_ * dt
+        a = -b * v_ / m - w
+
+        t += dt
+    }
+    return result
 }
