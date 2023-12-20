@@ -135,7 +135,7 @@ const draw = ms => {
     ctx.save()
     ctx.font = "9px Verdana"
     ctx.fillStyle = 'black'
-    ctx.fillText(`${ms.toFixed(3)} - ${performance.now() - stopwatch}`, 10, 10)
+    ctx.fillText(`${ms.toFixed(3)} - ${(performance.now() - stopwatch).toFixed(3)}`, 10, 10)
     ctx.restore()
 }
 
