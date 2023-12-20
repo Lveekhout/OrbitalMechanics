@@ -1,18 +1,23 @@
 const camera = {x: 1024 / 8, y: 768 / 2, scale: 35}
 const visor = { x: null, y: null, visible: false }
 
-let dt = 1 / 220
-const repository = {}
-const v = 10
-let m = 1
-let w = 2
-let b = 1 / 2
+let animating = true
+let cms = 0
+
+const is = 0
+const iv = Math.sqrt(2) * 10
+let im = 2
+let ib = -2
+let iw = 0
+let s = is
+let v = iv
 
 window.onload = e => {
     window.requestAnimationFrame(draw)
+    // setTimeout(() => animating = false, 10000)
 
     document.getElementById('canvas').addEventListener('mousemove', event => {
-        window.requestAnimationFrame(draw)
+        if (!animating) window.requestAnimationFrame(draw)
         event.preventDefault()
 
         visor.x = event.offsetX
@@ -29,7 +34,7 @@ window.onload = e => {
     })
 
     document.getElementById('canvas').addEventListener('mousewheel', event => {
-        window.requestAnimationFrame(draw)
+        if (!animating) window.requestAnimationFrame(draw)
         event.preventDefault()
 
         const scaleBefore = camera.scale
@@ -43,47 +48,42 @@ window.onload = e => {
     })
 
     document.getElementById('canvas').addEventListener('mouseenter', () => {
-        window.requestAnimationFrame(draw)
+        if (!animating) window.requestAnimationFrame(draw)
         visor.visible = true
     })
 
     document.getElementById('canvas').addEventListener('mouseleave', () => {
-        window.requestAnimationFrame(draw)
+        if (!animating) window.requestAnimationFrame(draw)
         visor.visible = false
     })
 
     document.querySelectorAll('input[type=range]')[0].addEventListener('input', e => {
-        window.requestAnimationFrame(draw)
-        dt = 1 / Number(e.target.value)
-        repository.s = generate()
-        outputText('p004', `dt = 1 / ${e.target.value}`)
+        if (!animating) window.requestAnimationFrame(draw)
+        ib = Number(e.target.value)
+        outputText('p004', `b = ${ib.toFixed(2)}`)
     })
 
     document.querySelectorAll('input[type=range]')[1].addEventListener('input', e => {
-        window.requestAnimationFrame(draw)
-        b = Number(e.target.value)
-        outputText('p005', `b = ${b.toFixed(2)}`)
-        repository.s = generate()
+        iw = Number(e.target.value)
+        outputText('p005', `w = ${iw.toFixed(2)}`)
+    })
+
+    document.querySelectorAll('input[type=range]')[1].addEventListener('mouseup', e => {
+        iw = 0
+        e.target.value = iw
+        outputText('p005', `w = ${iw.toFixed(2)}`)
     })
 
     document.querySelectorAll('input[type=range]')[2].addEventListener('input', e => {
-        window.requestAnimationFrame(draw)
-        w = Number(e.target.value)
-        outputText('p006', `w = ${w.toFixed(2)}`)
-        repository.s = generate()
+        if (!animating) window.requestAnimationFrame(draw)
+        im = Number(e.target.value)
+        outputText('p006', `m = ${im.toFixed(2)}`)
     })
-
-    document.querySelectorAll('input[type=range]')[3].addEventListener('input', e => {
-        window.requestAnimationFrame(draw)
-        m = Number(e.target.value)
-        outputText('p007', `m = ${m.toFixed(2)}`)
-        repository.s = generate()
-    })
-
-    repository.s = generate()
 }
 
 const draw = ms => {
+    if (animating) window.requestAnimationFrame(draw)
+
     const canvas = document.getElementById('canvas')
     const ctx = canvas.getContext('2d')
 
@@ -121,43 +121,57 @@ const draw = ms => {
 
             ctx.restore()
         } // Raster
-
         {
             ctx.save()
-            ctx.lineWidth = 1 / camera.scale
-
-            {
-                ctx.fillStyle = 'red'
-                repository.s.forEach(e => {
-                    ctx.beginPath()
-                    ctx.arc(e[0], -e[1], 3 / camera.scale, 0, Math.PI * 2)
-                    ctx.fill()
-                })
-            } // Benaderde waarde
-
-            {
-                // https://www.desmos.com/calculator/ojgg62opno
-                let toggle = false
-                ctx.beginPath()
-                for (let x = view.x1; x <= view.x2; x += 1 / camera.scale) {
-                    const y = v * m / b * (1 - Math.pow(Math.E, -b / m * x))
-                    if (Number.isFinite(y)) {
-                        if (!toggle) {
-                            ctx.moveTo(x, -y)
-                            toggle = true
-                        }
-                        else ctx.lineTo(x, -y)
-                    } else toggle = false
-                }
-                ctx.strokeStyle = 'purple'
-                ctx.stroke()
-            } // Grafiek
-
+            ctx.beginPath()
+            ctx.fillStyle = 'blue'
+            ctx.arc(f(ms / 1000), 0, 3 / camera.scale, 0, Math.PI * 2)
+            ctx.fill()
             ctx.restore()
-        }
+        } // Moving object f(t)
+        {
+            ctx.save()
+            ctx.beginPath()
+            ctx.fillStyle = 'red'
+            // g((ms - cms) / 1000)
+            const x = g((ms - cms) / 1000)
+            ctx.arc(x, -1, 3 / camera.scale, 0, Math.PI * 2)
+            ctx.fill()
+            ctx.restore()
+
+            let vectW = new Vector([s, 1], [iw, 0])
+            let vectV = new Vector([s, 1], [v, 0])
+            let vectB = new Vector([s, 1], [ib * v, 0])
+            if (Math.abs(iw) * camera.scale >= 10) vectW.draw(ctx, 5, 'orange', 1 / 3)
+            if (Math.abs(v) * camera.scale >= 10) vectV.draw(ctx, 5, 'green', 1 / 3)
+            if (Math.abs(ib * v) * camera.scale >= 10) vectB.draw(ctx, 5, 'blue', 1 / 3)
+
+            outputText('p007', `s = ${s.toFixed(64)}`)
+            outputText('p008', `v = ${v.toFixed(64)}`)
+        } // Moving object g(dt)
     } // Layers
 
     ctx.restore()
+
+    ctx.save()
+    ctx.font = "9px Verdana"
+    ctx.fillStyle = 'black'
+    ctx.fillText(`${ms.toFixed(3)} - ${(ms - cms).toFixed(3)}`, 10, 10)
+    ctx.restore()
+
+    if (visor.visible) {
+        ctx.save()
+        ctx.beginPath()
+        ctx.moveTo(visor.x, 0)
+        ctx.lineTo(visor.x, canvas.height)
+        ctx.moveTo(0, visor.y)
+        ctx.lineTo(canvas.width, visor.y)
+        ctx.strokeStyle = '#FF000030'
+        ctx.lineWidth = 2
+        ctx.stroke()
+        ctx.restore()
+    }
+    cms = ms
 }
 
 const outputText = (elementId, str) => {
@@ -180,25 +194,4 @@ const getView = () => {
         x2: (canvas.width - camera.x) / camera.scale,
         y2: (canvas.height - camera.y) / camera.scale
     }
-}
-
-const generate = () => {
-    const result = []
-
-    let idx = 0
-    let t = 0
-    const time = 60 // seconden
-    let s = 0
-    let v_ = v
-    let a = -b * v_ / m - w
-    while (t < time) {
-        if (idx++ % 10 === 0) result.push([t, s])
-
-        v_ += a * dt
-        s += v_ * dt
-        a = -b * v_ / m - w
-
-        t += dt
-    }
-    return result
 }

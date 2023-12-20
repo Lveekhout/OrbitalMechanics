@@ -2,12 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Afstand 1d Linear Drag</title>
+    <title>2d Beweging Animated</title>
     <link rel="stylesheet" href="css/index.css">
     <script src="js/index.js"></script>
+    <script src="js/situatie-2.js"></script>
+    <script src="js/Vector.js"></script>
 </head>
 <body>
 <table border="0" width="100%" cellpadding="0" cellspacing="0">
+    <tr style="background-color: #94acbd">
+        <td colspan="2">
+            <p style="margin: 40px">This is how we party!!!</p>
+        </td>
+    </tr>
     <tr>
         <td>
             <canvas id="canvas" width="1024" height="768" style="display: inline-block; cursor: grab"></canvas>
@@ -19,12 +26,6 @@
                 <p id="p003">Initializing....</p>
             </div>
             <div style="font-family: 'Courier New'; display: block; background-color: #a58fa6; padding: 10px">
-                <label id="p004">dt = 1 / 220</label>
-                <input type="range" min="1" max="2500" value="220" autofocus>
-                <label id="p005">m = 1</label>
-                <input type="range" min="0" max="10" value="1" autofocus>
-                <label id="p006">v = 1</label>
-                <input type="range" min="0" max="10" value="1" autofocus>
             </div>
         </td>
     </tr>
