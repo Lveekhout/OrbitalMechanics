@@ -49,6 +49,8 @@ window.onload = e => {
 }
 
 const draw = ms => {
+    const stopwatch = performance.now()
+
     if (animating) window.requestAnimationFrame(draw)
 
     const canvas = document.getElementById('canvas')
@@ -95,7 +97,7 @@ const draw = ms => {
             ctx.strokeStyle = '#0002'
             ctx.lineWidth = 1 / camera.scale
             ctx.beginPath()
-            for (let t = ms / 1000 - 1; t < ms / 1000 + 1; t += 1 / 10) {
+            for (let t = ms / 1000 - 1; t < ms / 1000 + 20; t += 1 / 10) {
                 const r_ = r(t)
                 const r_hat_ = r_hat(t)
                 if (first) { ctx.moveTo(r_ * r_hat_[0], -r_ * r_hat_[1]); first = false }
@@ -103,7 +105,7 @@ const draw = ms => {
             }
             ctx.stroke()
             ctx.restore()
-        }
+        } // Chemtrail
 
         const r_ = r(ms / 1000)
         const r_hat_ = r_hat(ms / 1000)
@@ -133,7 +135,7 @@ const draw = ms => {
     ctx.save()
     ctx.font = "9px Verdana"
     ctx.fillStyle = 'black'
-    ctx.fillText(`${ms.toFixed(3)}`, 10, 10)
+    ctx.fillText(`${ms.toFixed(3)} - ${performance.now() - stopwatch}`, 10, 10)
     ctx.restore()
 }
 
