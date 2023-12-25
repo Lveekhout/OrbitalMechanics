@@ -3,7 +3,7 @@ function f(t) {
 }
 
 function g(dt) {
-    s += im / ib * (v + iw / ib) * (Math.pow(Math.E, ib * dt / im) - 1) - iw / ib * dt
+    s = im / ib * (v + iw / ib) * (Math.pow(Math.E, ib * dt / im) - 1) - iw / ib * dt + s
     v = (v + iw / ib) * Math.pow(Math.E, ib * dt / im) - iw / ib
     return s
 }

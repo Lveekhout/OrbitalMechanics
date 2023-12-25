@@ -12,6 +12,9 @@ let iw = 0
 let s = is
 let v = iv
 
+const motion1d = new MotionWithLinearDrag1d(is, iv, im, ib, iw)
+const motion2d = new MotionWithLinearDrag2d([is, 3], [iv, 2], im, ib, [iw, 0])
+
 window.onload = e => {
     window.requestAnimationFrame(draw)
     // setTimeout(() => animating = false, 10000)
@@ -23,7 +26,10 @@ window.onload = e => {
         visor.x = event.offsetX
         visor.y = event.offsetY
 
-        if (event.ctrlKey) {
+        motion2d.setW([0, 0])
+        if (event.shiftKey) {
+            motion2d.setW([(event.offsetX - canvas.width / 2) / 10, (event.offsetY - canvas.height / 2) / -10])
+        } else if (event.ctrlKey) {
             camera.x = event.offsetX
             camera.y = event.offsetY
         } else if (event.buttons === 1) {
@@ -60,16 +66,22 @@ window.onload = e => {
     document.querySelectorAll('input[type=range]')[0].addEventListener('input', e => {
         if (!animating) window.requestAnimationFrame(draw)
         ib = Number(e.target.value)
+        motion1d.setB(e.target.value)
+        motion2d.setB(e.target.value)
         outputText('p004', `b = ${ib.toFixed(2)}`)
     })
 
     document.querySelectorAll('input[type=range]')[1].addEventListener('input', e => {
         iw = Number(e.target.value)
+        motion1d.setW(e.target.value)
+        motion2d.setW([e.target.value, 0])
         outputText('p005', `w = ${iw.toFixed(2)}`)
     })
 
     document.querySelectorAll('input[type=range]')[1].addEventListener('mouseup', e => {
         iw = 0
+        motion1d.setW(0)
+        motion2d.setW([0, 0])
         e.target.value = iw
         outputText('p005', `w = ${iw.toFixed(2)}`)
     })
@@ -77,11 +89,14 @@ window.onload = e => {
     document.querySelectorAll('input[type=range]')[2].addEventListener('input', e => {
         if (!animating) window.requestAnimationFrame(draw)
         im = Number(e.target.value)
+        motion1d.setM(e.target.value)
+        motion2d.setM(e.target.value)
         outputText('p006', `m = ${im.toFixed(2)}`)
     })
 }
 
 const draw = ms => {
+    const start = performance.now()
     if (animating) window.requestAnimationFrame(draw)
 
     const canvas = document.getElementById('canvas')
@@ -135,7 +150,7 @@ const draw = ms => {
             ctx.fillStyle = 'red'
             // g((ms - cms) / 1000)
             const x = g((ms - cms) / 1000)
-            ctx.arc(x, -1, 3 / camera.scale, 0, Math.PI * 2)
+            ctx.arc(x, -1, Math.sqrt(2) * im / camera.scale, 0, Math.PI * 2)
             ctx.fill()
             ctx.restore()
 
@@ -149,6 +164,14 @@ const draw = ms => {
             outputText('p007', `s = ${s.toFixed(64)}`)
             outputText('p008', `v = ${v.toFixed(64)}`)
         } // Moving object g(dt)
+        {
+            motion1d.update((ms - cms) / 1000)
+            motion1d.drawPosition(ctx)
+        } // Moving object MotionWithLinearDrag1d()
+        {
+            motion2d.update((ms - cms) / 1000)
+            motion2d.drawPosition(ctx)
+        } // Moving object MotionWithLinearDrag2d()
     } // Layers
 
     ctx.restore()
@@ -156,7 +179,7 @@ const draw = ms => {
     ctx.save()
     ctx.font = "9px Verdana"
     ctx.fillStyle = 'black'
-    ctx.fillText(`${ms.toFixed(3)} - ${(ms - cms).toFixed(3)}`, 10, 10)
+    ctx.fillText(`${ms.toFixed(3)} - ${(ms - cms).toFixed(3)} - ${(performance.now() - start).toFixed(3)}`, 10, 10)
     ctx.restore()
 
     if (visor.visible) {

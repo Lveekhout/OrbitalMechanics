@@ -1,7 +1,10 @@
-const camera = {x: 1024 / 2, y: 768 / 2, scale: 30}
+const camera = {x: 1024 / 3, y: 768 / 2, scale: 30}
 const visor = { x: null, y: null, visible: false }
 
 let animating = true
+let cms = 0
+
+const motion2d = new MotionWithLinearDrag2d([0, 0], [10, 10], 3, -1 / 2, [0, -9.81])
 
 window.onload = e => {
     if (animating) window.requestAnimationFrame(draw)
@@ -90,44 +93,10 @@ const draw = ms => {
 
             ctx.restore()
         } // Raster
-
         {
-            let first = true
-            ctx.save()
-            ctx.strokeStyle = '#0002'
-            ctx.lineWidth = 1 / camera.scale
-            ctx.beginPath()
-            for (let t = ms / 1000 - 1; t < ms / 1000 + 20; t += 1 / 10) {
-                const r_ = r(t)
-                const r_hat_ = r_hat(t)
-                if (first) { ctx.moveTo(r_ * r_hat_[0], -r_ * r_hat_[1]); first = false }
-                else ctx.lineTo(r_ * r_hat_[0], -r_ * r_hat_[1])
-            }
-            ctx.stroke()
-            ctx.restore()
-        } // Chemtrail
-
-        const r_ = r(ms / 1000)
-        const r_hat_ = r_hat(ms / 1000)
-        {
-            const vectR = new Vector([r_ * r_hat_[0], r_ * r_hat_[1]])
-            // vectR.draw(ctx, 8, 'purple', 1)
-
-            const vectV = new Vector(vectR.p, v(ms / 1000))
-            if (vectV.length > 8 / camera.scale) vectV.draw(ctx, 8, 'green', 1)
-
-            const vectA = new Vector(vectR.p, a(ms / 1000))
-            if (vectA.length > 8 / camera.scale) vectA.draw(ctx, 8, 'blue', 1)
-        }
-
-        {
-            ctx.save()
-            ctx.fillStyle = 'red'
-            ctx.beginPath()
-            ctx.arc(r_ * r_hat_[0], -r_ * r_hat_[1], 3 / camera.scale, 0, Math.PI * 2)
-            ctx.fill()
-            ctx.restore()
-        }
+            motion2d.update((ms - cms) / 1000)
+            motion2d.drawPosition(ctx)
+        } // Moving object MotionWithLinearDrag2d()
     } // Layers
 
     ctx.restore()
@@ -137,6 +106,7 @@ const draw = ms => {
     ctx.fillStyle = 'black'
     ctx.fillText(`${ms.toFixed(3)} - ${(performance.now() - stopwatch).toFixed(3)}`, 10, 10)
     ctx.restore()
+    cms = ms
 }
 
 const outputText = (elementId, str) => {
