@@ -24,13 +24,14 @@ function MotionWithLinearDrag2d(s, v, m, b, w) {
     this.update = ds => { // https://www.desmos.com/calculator/gvy3l2yamb
         x.update(ds)
         y.update(ds)
-        if (y.info().s < 0) {
-            y.setS(-y.info().s / 2)
-            y.setV(-y.info().v / 2)
-        }
+        // if (y.info().s < 0) {
+        //     y.setS(-y.info().s / 2)
+        //     y.setV(-y.info().v / 2)
+        // }
     }
 
     this.drawPosition = ctx => {
+        drawTrail(ctx)
         drawDrag(ctx)
         drawVelocity(ctx)
         drawForce(ctx)
@@ -55,5 +56,23 @@ function MotionWithLinearDrag2d(s, v, m, b, w) {
     const drawForce = ctx => {
         const vect = new Vector([x.info().s, y.info().s], [x.info().w, y.info().w])
         if (vect.length > .3) vect.draw(ctx, 8, 'orange', 1 / 3)
+    }
+
+    const drawTrail = ctx => {
+        let first = true
+        ctx.save()
+        ctx.strokeStyle = 'yellow'//'#0002'
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = "black";
+        ctx.lineWidth = .5 / camera.scale
+        ctx.beginPath()
+        for (let t = -10; t < 2; t += 1 / 10) {
+            const x_ = x.peek(t)
+            const y_ = y.peek(t)
+            if (first) { ctx.moveTo(x_, -y_); first = false }
+            else ctx.lineTo(x_, -y_)
+        }
+        ctx.stroke()
+        ctx.restore()
     }
 }

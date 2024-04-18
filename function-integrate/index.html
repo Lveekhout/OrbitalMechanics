@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Integrate</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script src="js/situatie-1.js"></script>
+    <script src="js/index.js"></script>
+</head>
+<body>
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+        <td>
+            <canvas id="canvas" width="1024" height="768"></canvas>
+        </td>
+        <td style="width: 100%; vertical-align: top">
+            <div style="font-family: 'Courier New'; display: inline-block; background-color: darkseagreen; padding: 10px">
+                <p id="p001">Initializing....</p>
+                <p id="p002">Initializing....</p>
+                <p id="p003">Initializing....</p>
+            </div>
+            <div>
+                <div>
+                    <input type="range" min=".01" max="1" step=".01" value="1">
+                    <p id="output-dx">dx = 1</p>
+                </div>
+                <input type="checkbox">
+                <div>
+                    <input type="range" min="-5" max="5" step=".1" value="2">
+                    <p id="output-c">c = 2</p>
+                </div>
+                <div>
+                    <input type="range" min="-5" max="5" step=".1" value="0">
+                    <p id="output-d">d = 0</p>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

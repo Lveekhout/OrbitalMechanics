@@ -1,7 +1,7 @@
 const displacement = t => {
-    // return m/b * Math.log(b*t+m/v)
+    return m/b * Math.log(b*t+m/v)
     // return m / b * Math.log(Math.abs(b * v * t + m)) - m / b * Math.log(m)
-    return v*t
+    // return v*t
 }
 
 const generate = () => {

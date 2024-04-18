@@ -1,5 +1,3 @@
-// Zelfde als situatie-1, maar dan generiek
-
 function r(t) {
     return 3 * Math.cos(t) * Math.sin(3 * t) + 10
 }

@@ -4,7 +4,7 @@ const visor = { x: null, y: null, visible: false }
 let animating = true
 let cms = 0
 
-const motion2d = new MotionWithLinearDrag2d([0, 0], [10, 10], 3, -1 / 2, [0, -9.81])
+const motion2d = new MotionWithLinearDrag2d([0, 0], [4, 10], 3, -1 / 2, [0, -9.81])
 
 window.onload = e => {
     if (animating) window.requestAnimationFrame(draw)

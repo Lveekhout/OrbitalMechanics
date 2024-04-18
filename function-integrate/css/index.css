@@ -3,7 +3,9 @@
 }
 
 canvas {
-    background-color: #aaaaf1;
+    background-color: #e8e8e8;
+    display: inline-block;
+    cursor: crosshair;
 }
 
 input[type="range"] {

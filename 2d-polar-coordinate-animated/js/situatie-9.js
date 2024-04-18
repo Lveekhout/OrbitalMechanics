@@ -1,29 +1,32 @@
+// Raakvlakken met situatie-8.js
+const ia = -1
+const ir = 5
 function r(t) {
-    return 10 + 3 * Math.sin(t)
+    return ir * -ia
 }
 
 function theta(t) {
-    return -Math.cos(t) + 1 / 4 * t + 1
+    return 1 / Math.sqrt(r(t)) * t
 }
 
 function r_hat(t) {
     return [Math.cos(theta(t)), Math.sin(theta(t))]
 }
-// Afgeleiden
-function r_dot(t) {
-    return 3 * Math.cos(t)
-}
 function theta_hat(t) {
     return [-Math.sin(theta(t)), Math.cos(theta(t))]
 }
+// Afgeleiden
+function r_dot(t) {
+    return 0
+}
 function theta_dot(t) {
-    return Math.sin(t) + 1 / 4
+    return 1 / Math.sqrt(r(t))
 }
 function r_dot2(t) {
-    return -3 * Math.sin(t)
+    return 0
 }
 function theta_dot2(t) {
-    return Math.cos(t)
+    return 0
 }
 /////////////
 function v(t) {

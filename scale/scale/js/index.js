@@ -28,7 +28,7 @@ window.onload = e => {
         const scaleBefore = camera.scale
 
         camera.scale *= 1 - event.deltaY / 1000
-        camera.scale = Math.min(Math.max(camera.scale, .1), 10000)
+        camera.scale = Math.min(Math.max(camera.scale, 10), 10000)
 
         camera.x = event.offsetX - ((event.offsetX - camera.x) / scaleBefore) * camera.scale
         camera.y = event.offsetY - ((event.offsetY - camera.y) / scaleBefore) * camera.scale

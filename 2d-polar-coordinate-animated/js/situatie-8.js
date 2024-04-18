@@ -1,29 +1,32 @@
+const ia = -1
+const c1 = 0
+const c2 = 5
 function r(t) {
-    return 10 + 3 * Math.sin(t)
+    return ia / 2 * t * t + c1 * t + c2
 }
 
 function theta(t) {
-    return -Math.cos(t) + 1 / 4 * t + 1
+    return 0
 }
 
 function r_hat(t) {
     return [Math.cos(theta(t)), Math.sin(theta(t))]
 }
-// Afgeleiden
-function r_dot(t) {
-    return 3 * Math.cos(t)
-}
 function theta_hat(t) {
     return [-Math.sin(theta(t)), Math.cos(theta(t))]
 }
+// Afgeleiden
+function r_dot(t) {
+    return ia * t + c1
+}
 function theta_dot(t) {
-    return Math.sin(t) + 1 / 4
+    return 0
 }
 function r_dot2(t) {
-    return -3 * Math.sin(t)
+    return ia
 }
 function theta_dot2(t) {
-    return Math.cos(t)
+    return 0
 }
 /////////////
 function v(t) {
