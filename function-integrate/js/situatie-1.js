@@ -1,5 +1,5 @@
-const f = x => x / 5 + d
-const g = x => Math.pow(x, 2) / 10 + c
+// const f = x => x / 5 + d
+// const g = x => Math.pow(x, 2) / 10 + c
 //----------------------------------------------------------------
 // const f = x => Math.sin(x) + d
 // const g = x => -Math.cos(x) + d * x
@@ -25,6 +25,14 @@ const g = x => Math.pow(x, 2) / 10 + c
 // const f = x => 1 / (Math.pow(x,2) - 8 * x + 1)
 // const g = x => undefined
 //----------------------------------------------------------------
+// const f = x => -x * x + 4 * x
+// const g = x => -(1/3)*x*x*x +2*x*x
+//----------------------------------------------------------------
+// const f = x => Math.sqrt(1 + 4 * Math.pow(x, 2)) + d
+// const g = x => undefined
+//----------------------------------------------------------------
+const f = x => 1 / Math.pow(Math.cos(x), 3)
+const g = x => undefined
 
 const drawGraph = (ctx, functionOfX, view, color) => {
     ctx.save()

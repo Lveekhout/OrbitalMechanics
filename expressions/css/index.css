@@ -1,0 +1,13 @@
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
+canvas {
+    background-color: #e8e8e8;
+    display: inline-block;
+    cursor: crosshair;
+}
+
+input[type="range"] {
+    width: 300px;
+}

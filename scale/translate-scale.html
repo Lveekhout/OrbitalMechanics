@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Translate vs Scale</title>
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+        input[type="range"] {
+            width: 512px;
+        }
+        canvas {
+            background-color: #aaaaf1;
+        }
+        td {
+            vertical-align: top;
+        }
+    </style>
+    <script>
+        const camera = { x: 0, y: 0, scale: 1, angle: 0 }
+        const visor = { x: 100, y: 100, visible: false }
+        const iImage = new Image()
+
+        iImage.src = 'https://www.hollandschemeesters.com/gfx/schilder/prev_korenveld-met-cipressen-van-gogh_b.jpg'
+    </script> <!-- Global variables -->
+    <script>
+        const draw = ms => {
+            const canvas = document.getElementById('canvas')
+            const ctx = canvas.getContext('2d')
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+            ctx.save()
+
+            ctx.scale(camera.scale, camera.scale)
+            ctx.translate(camera.x, camera.y)
+            ctx.rotate(camera.angle)
+
+            {
+                {
+                    ctx.save()
+                    ctx.drawImage(iImage, 0, 0)
+                    ctx.restore()
+                } // Shape image
+                {
+                    ctx.save()
+                    ctx.fillStyle = 'red'
+                    ctx.beginPath()
+                    ctx.arc(100, 100, 3, 0, Math.PI * 2, false)
+                    ctx.fill()
+                    ctx.restore()
+                } // Shape dot
+            } // Layers
+            ctx.restore()
+
+            ctx.save()
+            ctx.strokeStyle = '#00F8'
+            ctx.lineWidth = 2
+            ctx.beginPath()
+            ctx.moveTo(canvas.width / 2, 0)
+            ctx.lineTo(canvas.width / 2, canvas.height)
+            ctx.stroke()
+            ctx.restore()
+
+            if (visor.visible) {
+                ctx.save()
+                ctx.beginPath()
+                ctx.moveTo(visor.x, 0)
+                ctx.lineTo(visor.x, canvas.height)
+                ctx.moveTo(0, visor.y)
+                ctx.lineTo(canvas.width, visor.y)
+                ctx.strokeStyle = '#FF000030'
+                ctx.lineWidth = 2
+                ctx.stroke()
+                ctx.restore()
+            }
+        }
+    </script> <!--  draw -->
+    <script>
+        window.onload = e => {
+            window.requestAnimationFrame(draw)
+
+            document.getElementById('canvas').addEventListener('mousemove', event => {
+                window.requestAnimationFrame(draw)
+                event.preventDefault()
+
+                visor.x = event.offsetX
+                visor.y = event.offsetY
+
+                if (event.ctrlKey) {
+                    camera.x = event.offsetX
+                    camera.y = event.offsetY
+                } else if (event.buttons === 1) {
+                    camera.x += event.movementX
+                    camera.y += event.movementY
+                }
+            })
+
+            document.getElementById('canvas').addEventListener('mousewheel', event => {
+                window.requestAnimationFrame(draw)
+                event.preventDefault()
+
+                // Variant #1: Volgorde -> 1. translate, 2. scale.
+                // const scaleBefore = camera.scale
+                // camera.scale *= 1 - event.deltaY / 1000
+                // camera.x = event.offsetX - ((event.offsetX - camera.x) / scaleBefore) * camera.scale
+                // camera.y = event.offsetY - ((event.offsetY - camera.y) / scaleBefore) * camera.scale
+
+                // Variant #2: Volgorde -> 1. translate, 2. scale. Zelfde als #1, maar dan anders berekend (zie IMG_20240809_122216.jpg)
+                // const P = [(event.offsetX - camera.x) / camera.scale, (event.offsetY - camera.y) / camera.scale] // (Px - Cx) / S
+                // camera.scale *= 1 - event.deltaY / 1000
+                // camera.x = event.offsetX - P[0] * camera.scale // Cx = Vx - PxS
+                // camera.y = event.offsetY - P[1] * camera.scale // Cy = Vy - PyS
+
+                // Variant #3: Volgorde -> 1.scale , 2. translate. Zelfde berekenwijze als #2 (zie IMG_20240809_122216.jpg)
+                const P = [event.offsetX / camera.scale - camera.x, event.offsetY / camera.scale - camera.y] // Px = Vx / S - Cx
+                camera.scale *= 1 - event.deltaY / 1000
+                camera.x = event.offsetX / camera.scale - P[0] // Cx = Vx / S - Px
+                camera.y = event.offsetY / camera.scale - P[1] // Cy = Vy / S - Py
+            })
+
+            document.getElementById('canvas').addEventListener('mouseenter', event => {
+                window.requestAnimationFrame(draw)
+                visor.visible = true
+            })
+
+            document.getElementById('canvas').addEventListener('mouseleave', event => {
+                window.requestAnimationFrame(draw)
+                visor.visible = false
+            })
+
+            document.querySelectorAll('input[type=range]')[0].addEventListener('input', e => {
+                requestAnimationFrame(draw)
+                camera.x = e.target.value
+                document.querySelectorAll('label')[0].textContent = `translate-x: ${camera.x}`
+            })
+
+            document.querySelectorAll('input[type=range]')[1].addEventListener('input', e => {
+                requestAnimationFrame(draw)
+                camera.y = e.target.value
+                document.querySelectorAll('label')[1].textContent = `translate-y: ${camera.y}`
+            })
+
+            document.querySelectorAll('input[type=range]')[2].addEventListener('input', e => {
+                requestAnimationFrame(draw)
+                camera.scale = e.target.value
+                document.querySelectorAll('label')[2].textContent = `scale-x: ${camera.scale}`
+            })
+
+            document.querySelectorAll('input[type=range]')[3].addEventListener('input', e => {
+                requestAnimationFrame(draw)
+                camera.angle = e.target.value
+                document.querySelectorAll('label')[3].textContent = `rotate: ${camera.angle}`
+            })
+        }
+    </script> <!--  onLoad -->
+</head>
+<body>
+<table>
+    <tr>
+        <td>
+            <canvas id="canvas" width="1024" height="768" style="cursor: grab"></canvas>
+        </td>
+        <td>
+            <label>translate-x: 0</label><br>
+            <input type="range" value="0" min="-1024" max="1024">
+            <br><br>
+            <label>translate-y: 0</label><br>
+            <input type="range" value="0" min="-768" max="768">
+            <br><br>
+            <label>scale-x: 1</label><br>
+            <input type="range" value="1" min="-2" max="2" step=".01">
+            <br><br>
+            <label>rotate: 0</label><br>
+            <input type="range" value="0" min="-6.28" max="6.28" step=".01">
+        </td>
+    </tr>
+</table>
+</body>
+</html>

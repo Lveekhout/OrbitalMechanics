@@ -1,5 +1,5 @@
-const f = x => Math.pow(x, 2) / 10 + c
-const g = x => x / 5
+const f = x => Math.pow(x, 2) / c
+const g = x => x / 5 / c
 //----------------------------------------------------------------
 // const f = x => Math.atan(x) + c
 // const g = x => 1 / (Math.pow(x, 2) + 1)

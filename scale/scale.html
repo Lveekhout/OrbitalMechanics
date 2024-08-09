@@ -9,6 +9,7 @@
         }
         canvas {
             background-color: #aaaaf1;
+            display: inline-block;
         }
     </style>
     <script>
@@ -19,7 +20,7 @@
         // iImage.src = 'https://www.vangoghgallery.com/img/starry_night_full.jpg'
         iImage.src = 'https://i.pinimg.com/originals/07/8a/b5/078ab50f97a4a8031c9a11b17324f22c.png'
         // iImage.src = '/Users/lveekhout/Documents/Additional Log/DDWG-1776/ER-public.png'
-    </script> <!-- Global variables-->
+    </script> <!-- Global variables -->
     <script>
         const draw = ms => {
             // window.requestAnimationFrame(draw)
@@ -84,13 +85,13 @@
                 ctx.restore()
             }
         }
-    </script>
+    </script> <!--  draw -->
     <script>
         const setScale = value => {
             camera.scale = value
             document.querySelector('textarea').innerHTML = JSON.stringify(camera, "\n", 2)
         }
-    </script>
+    </script> <!--  setScale -->
     <script>
         window.onload = e => {
             window.requestAnimationFrame(draw)
@@ -151,7 +152,7 @@
                 visor.visible = false
             })
         }
-    </script>
+    </script> <!--  onLoad -->
 </head>
 <body>
 <canvas id="canvas" width="1024" height="768" style="cursor: grab"></canvas>
