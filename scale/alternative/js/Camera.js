@@ -1,8 +1,9 @@
 function Camera(canvas) {
+    this.canvas = canvas
     this.ctx = canvas.getContext('2d')
-    this.x = 150
-    this.y = 720
-    this.scale = 3
+    this.x = 250
+    this.y = 640
+    this.scale = 11
 
     this.preDraw = () => {
         this.ctx.save()
@@ -13,10 +14,6 @@ function Camera(canvas) {
     }
 
     this.postDraw = ms => {
-        this.ctx.restore()
-
-        this.ctx.save()
-        this.ctx.fillText(ms, 10, 10)
         this.ctx.restore()
     }
 
@@ -38,7 +35,7 @@ function Camera(canvas) {
         const scaleBefore = this.scale
 
         this.scale *= 1 - e.deltaY / 1000
-        this.scale = Math.min(Math.max(this.scale, 1), 10000)
+        this.scale = Math.min(Math.max(this.scale, 1/10), 10000)
 
         this.x = e.offsetX - ((e.offsetX - this.x) / scaleBefore) * this.scale
         this.y = e.offsetY - ((e.offsetY - this.y) / scaleBefore) * this.scale
