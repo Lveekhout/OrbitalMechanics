@@ -1,4 +1,4 @@
-const camera = {x: 1024 / 16, y: 768 / 4, scale: 50}
+const camera = {x: 20, y: 20, scale: 30}
 const visor = { x: null, y: null, visible: false }
 
 window.onload = e => {
@@ -44,6 +44,22 @@ window.onload = e => {
         window.requestAnimationFrame(draw)
         visor.visible = false
     })
+
+    postToLatexContrainer(example)
+    postToLatexContrainer(normalizeAdd(copyObj(example)))
+    postToLatexContrainer(derivative)
+    postToLatexContrainer(takeDerivative(derivative))
+    MathJax.typesetPromise()
+}
+
+const postToLatexContrainer = latex => {
+    switch (latex.constructor.name) {
+        case 'Object':
+            document.querySelector('#latexcontainer').innerHTML += `<p class=\"latexrow\">\\[${toLatex(latex)}\\]</p>`
+            break
+        default:
+            throw Error(`Onbekend type: [${latex.constructor.name}]`)
+    }
 }
 
 const draw = ms => {
@@ -90,7 +106,8 @@ const draw = ms => {
             ctx.textBaseline = "top" // type CanvasTextBaseline = "alphabetic" | "bottom" | "hanging" | "ideographic" | "middle" | "top";
             // ctx.textAlign = "center" // type CanvasTextAlign = "center" | "end" | "left" | "right" | "start";
 
-            const m = toCanvas(ctx, takeDerivative(derivative), [0, 0])
+            // const m = toCanvas(ctx, takeDerivative(derivative), [0, 0])
+            toCanvas(ctx, new Parser('-(x+1)*(x+123.25)').expr)
         } // Text
     } // Layers
     ctx.restore()

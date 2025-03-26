@@ -1,5 +1,5 @@
-const f = x => Math.pow(x, 2) / c
-const g = x => x / 5 / c
+// const f = x => Math.pow(x, 2) / c
+// const g = x => x / 5 / c
 //----------------------------------------------------------------
 // const f = x => Math.atan(x) + c
 // const g = x => 1 / (Math.pow(x, 2) + 1)
@@ -22,8 +22,8 @@ const g = x => x / 5 / c
 // const f = x => Math.log(Math.pow(x, 2)) + c
 // const g = x => 2 * x / Math.pow(x, 2)
 //----------------------------------------------------------------
-// const f = x => Math.sqrt(x) + c
-// const g = x => 1 / (2 * Math.sqrt(x))
+const f = x => 2 * Math.sqrt(x) + c
+const g = x => 1 / (1 * Math.sqrt(x))
 //----------------------------------------------------------------
 // const f = x => Math.pow(x, x) + c
 // const g = x => Math.pow(x, x) * (Math.log(x) + 1)

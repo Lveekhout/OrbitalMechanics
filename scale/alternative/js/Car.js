@@ -5,6 +5,7 @@ function Car(camera, track) {
 
     this.blip = 0
     this.reaction = 900
+    this.color = 'black'
 
     this.draw = () => {
         const ctx = camera.ctx
@@ -16,9 +17,14 @@ function Car(camera, track) {
             ctx.rotate(coords.angle)
             ctx.beginPath()
             ctx.rect(-2, -1, 4, 2)
+            ctx.fillStyle = this.color
             ctx.fill()
             ctx.beginPath()
-            ctx.rect(-2, -1, 4, 2)
+            ctx.arc(3 / 2, 0, 1 / 2, 0, pi * 2)
+            ctx.fillStyle = '#f33'
+            ctx.fill()
+            ctx.beginPath()
+            ctx.arc(3 / 2, 0, 1 / 2, 0, pi * 2)
             ctx.globalAlpha = this.blip
             ctx.fillStyle = 'yellow'
             ctx.fill()
@@ -34,50 +40,48 @@ function Car(camera, track) {
         if (this.v < 0) this.v = this.a = 0
     }
 
-    // this.decide = () => {
-    //     this.blip = 1
-    //
-    //     const d = track.length - this.s
-    //     if (d > 0) {
-    //         const ve = 10 // eind-snelheid
-    //         const p = -9 // max rem-slope
-    //         const q = -3 // relaxte rem-slope
-    //         const r = 4 // vol-gas(gemiddeld)
-    //         const m = (ve * ve - this.v * this.v) / 2 / d
-    //         if (m > q) {
-    //             const t = 2 * this.reaction / 1000
-    //             const vm = 100 / 3.6
-    //             // https://www.wolframalpha.com/input?i=v_1t%2Bv_2%28%28v_2-h%29%2Fm%29%2B1%2F2t%28h-v_1%29%2B1%2F2%28h-v_2%29%28%28v_2-h%29%2Fm%29%3Dd+for+h
-    //             // https://www.desmos.com/calculator/tobug20hlt
-    //             const h = (1 / 2) * (sqrt(-8 * d * p + p * p * t * t + 4 * m * t * this.v + 4 * ve * ve) + p * t) // IMG_20240918_142821.jpg
-    //             this.a = min((vm - this.v) / t, r, (h - this.v) / t)
-    //             // this.a = min((vm - this.v) / t, r)
-    //         } else {
-    //             this.a = max(m, p)
-    //         }
-    //     } else this.a = 0
-    // }
-
-    this.decide = () => { // Uitgaande van eind-snelheid = 0
+    this.decide = (distance, ve) => {
         this.blip = 4 / 5
 
-        const d = track.length - this.s
+        const d = distance - this.s
         if (d > 0) {
+            // const ve = track.velocity // eind-snelheid
             const p = -9 // max rem-slope
             const q = -3 // relaxte rem-slope
             const r = 4 // vol-gas(gemiddeld)
-            const m = -this.v * this.v / 2 / d
+            const m = (ve * ve - this.v * this.v) / 2 / d
             if (m > q) {
                 const t = 2 * this.reaction / 1000
                 const vm = 100 / 3.6
-                const h = (1 / 2) * (sqrt(p * (t * (p * t + 4 * this.v) - 8 * d)) + p * t) // IMG_20240918_142821.jpg
+                // https://www.wolframalpha.com/input?i=v_1t%2Bv_2%28%28v_2-h%29%2Fm%29%2B1%2F2t%28h-v_1%29%2B1%2F2%28h-v_2%29%28%28v_2-h%29%2Fm%29%3Dd+for+h
+                // https://www.desmos.com/calculator/tobug20hlt
+                const h = (1 / 2) * (sqrt(-8 * d * p + p * p * t * t + 4 * p * t * this.v + 4 * ve * ve) + p * t) // IMG_20240918_142821.jpg
                 this.a = min((vm - this.v) / t, r, (h - this.v) / t)
-                // this.a = min((vm - this.v) / t, r)
             } else {
                 this.a = max(m, p)
             }
         } else this.a = 0
     }
+
+    // this.decide = () => { // Uitgaande van eind-snelheid = 0
+    //     this.blip = 4 / 5
+    //
+    //     const d = track.length - this.s
+    //     if (d > 0) {
+    //         const p = -9 // max rem-slope
+    //         const q = -3 // relaxte rem-slope
+    //         const r = 4 // vol-gas(gemiddeld)
+    //         const m = -this.v * this.v / 2 / d
+    //         if (m > q) {
+    //             const t = 2 * this.reaction / 1000
+    //             const vm = 100 / 3.6
+    //             const h = (1 / 2) * (sqrt(p * (t * (p * t + 4 * this.v) - 8 * d)) + p * t) // IMG_20240918_142821.jpg
+    //             this.a = min((vm - this.v) / t, r, (h - this.v) / t)
+    //         } else {
+    //             this.a = max(m, p)
+    //         }
+    //     } else this.a = 0
+    // }
 
     // this.decide = () => {
     //     this.blip = 1

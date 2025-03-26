@@ -11,3 +11,11 @@ canvas {
 input[type="range"] {
     width: 300px;
 }
+
+p.latexrow {
+    font-size: 18pt;
+}
+
+p.latexrow:nth-child(odd) {
+    background-color: #f0f0ff;
+}

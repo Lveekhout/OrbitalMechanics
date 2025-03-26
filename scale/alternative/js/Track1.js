@@ -38,6 +38,8 @@ function Track(camera) {
         ctx.restore()
     }
 
+    this.update = ds => {}
+
     this.getCartesianCoordinates = s => {
         return {x: s, y: 0, angle: 0}
     }

@@ -44,17 +44,32 @@ const example = {
             values: [{
                 type: 'integer',
                 value: 3
-            },{
+            }, {
                 type: 'integer',
                 value: 3
             }]
         }]
     }, {
-        type: 'integer',
-        value: 321
+        type: 'multiply',
+        values: [
+            {
+                type: 'integer',
+                value: 321
+            }, {
+                type: 'integer',
+                value: 321
+            }
+        ]
     }]
 }
-
+const quotient = {
+    type: 'fraction',
+    numerator: example,
+    denominator: {
+        type: 'integer',
+        value: 321
+    }
+}
 const derivative = wrapDerivative(example, {
     type: 'variable',
     display: ['x', '\u{1d465}', 'x'] // [string, canvas, latex]

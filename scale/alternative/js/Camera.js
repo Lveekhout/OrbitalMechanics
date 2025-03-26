@@ -1,9 +1,9 @@
 function Camera(canvas) {
     this.canvas = canvas
     this.ctx = canvas.getContext('2d')
-    this.x = 250
-    this.y = 640
-    this.scale = 11
+    this.x = canvas.width / 2
+    this.y = canvas.height / 2
+    this.scale = 10
 
     this.preDraw = () => {
         this.ctx.save()

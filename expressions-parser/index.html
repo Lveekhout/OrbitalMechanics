@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Parser</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.1/es5/tex-mml-chtml.js"></script>
+    <script src="js/parser-utils.js"></script>
+    <script src="js/parser.js"></script>
+    <script src="js/factorise.js"></script>
+    <script src="../expressions/js/expression-code/latex.js"></script>
+    <script src="../expressions/js/expression-code/example-code.js"></script>
+    <script src="js/index.js"></script>
+</head>
+<body>
+<input class="syntax_ok" type="text" oninput="checkSyntax(event)" value="(sqrt(ln(sin(x^log(x)))))/2">
+<div class="latex-content" id="latex-compiled"></div>
+<textarea readonly></textarea>
+<div class="latex-content" id="latex-raw" name="Laurens"></div>
+</body>
+</html>
+

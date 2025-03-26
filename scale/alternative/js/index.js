@@ -1,24 +1,27 @@
 const pi = Math.PI
 const sin = Math.sin
 const cos = Math.cos
-const abs = Math.abs
 const min = Math.min
 const max = Math.max
 const sqrt = Math.sqrt
 
 let camera
 let track
-let car
 
 let animating = false
 let tStart
 let tCurrent
 
-window.onload = e => {
+let carArray = []
+let intervalArray = []
+
+window.onload = () => {
     camera = new Camera(document.querySelector('canvas'))
     track = new Track(camera)
-    car = new Car(camera, track)
+    carArray = generateCars()
     start()
+    startInterval()
+    startFirst()
 }
 
 const start = () => {
@@ -46,37 +49,43 @@ const loop = ms => {
     tCurrent = ms
 
     track.draw()
+    track.update(ds)
 
-    car.draw()
-    car.update(ds)
+    carArray.forEach(car => {
+        car.draw()
+        car.update(ds)
+    })
 
     camera.postDraw()
 
     camera.ctx.fillText(((ms - tStart) / 1000).toFixed(6), 10, 10)
-    camera.ctx.fillText(`s = ${car.s.toFixed(6)}`, 10, 30)
-    camera.ctx.fillText(`v = ${car.v.toFixed(6)}`, 10, 42)
-    camera.ctx.fillText(`a = ${car.a.toFixed(6)}`, 10, 54)
+    camera.ctx.fillText(`s = ${carArray[0].s.toFixed(6)}`, 10, 30)
+    camera.ctx.fillText(`v = ${carArray[0].v.toFixed(6)}`, 10, 42)
+    camera.ctx.fillText(`a = ${carArray[0].a.toFixed(6)}`, 10, 54)
+}
+const generateCars = () => {
+    const result = []
+    result.push(new Car(camera, track))
+    result[0].v = 0
+
+    const aantal = 16
+    for (let i = 1; i < aantal; i++) {
+        result.push(new Car(camera, track))
+        result[i].s = -(2 * pi * i / aantal) * (200 / pi / 2)
+        result[i].v = 0
+        result[i].reaction = 1000 + random(300)
+        result[i].color = 'blue'
+    }
+    return result
 }
 
-// const run = () => { // Voor track.length = 1000
-//     car.blip = 1
-//     car.a = 1000/35
-//     setTimeout(() => {
-//         car.blip = 1
-//         car.a = 0
-//     }, 5000)
-//     setTimeout(() => {
-//         car.blip = 1
-//         car.a = -1000/7
-//     }, 9000)
-//     setTimeout(() => {
-//         car.blip = 1
-//         car.a = 0
-//     }, 10000)
-// }
+const startInterval = () => {
+    for (let i = 1; i < carArray.length; i++) {
+        setInterval(() => carArray[i].decide(carArray[i-1].s - 5, carArray[i-1].v), carArray[i].reaction)
+    }
+}
 
-const run = () => {
-    car.a = 20 / 3
-    setTimeout(() => car.a = 0, 4000)
-    setTimeout(() => car.a = -80 / 3, 9000)
+const startFirst = () => {
+    const l = carArray.length - 1
+    setInterval(() => carArray[0].decide(carArray[l].s - 5 + track.length, carArray[l].v), carArray[0].reaction)
 }

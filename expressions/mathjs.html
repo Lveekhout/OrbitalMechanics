@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MathJS</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.4/math.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.1/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.onload = e => {
+            document.querySelector('input').dispatchEvent(new Event('input'))
+        }
+
+        const checkSyntax = e => {
+            try {
+                const parsed = math.parse(e.target.value)
+                const latex = parsed.toTex()
+                document.querySelector('#latex-compiled').innerHTML = `\\[${latex}\\]`
+                document.querySelector('textarea').textContent = JSON.stringify(parsed, null, 2)
+                MathJax.typesetPromise()
+            } catch (ex) {
+                document.querySelector('#latex-compiled').innerHTML = ''
+                document.querySelector('textarea').textContent = ex.message
+            }
+        }
+    </script>
+</head>
+<body>
+<input type="text" oninput="checkSyntax(event)" value="x^2-10+20" style="display: block; width: 640px">
+<br>
+<div id="latex-compiled" style="display: block; border: black solid 1px; margin-top: 20px; width: 800px; height: 100px"></div>
+<br>
+<div style="display: block; position: relative; width: 640px; height: 480px">
+    <textarea readonly style="display: block; position: absolute; left: 0; right: 0; top: 0; bottom: 0"></textarea>
+</div>
+</body>
+</html>

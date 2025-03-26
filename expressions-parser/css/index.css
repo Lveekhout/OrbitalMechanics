@@ -1,0 +1,33 @@
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
+input {
+    width: 800px;
+}
+input.syntax_ok {
+    border: 1px solid #0cc;  /* Optional: Sets a base border */
+    padding: 10px;           /* Adjust padding as needed */
+    outline: none;           /* Removes default outline on focus */
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.7); /* Glowing effect */
+    transition: box-shadow 0.3s ease-in-out;      /* Smooth transition */
+}
+
+input.syntax_error {
+    box-shadow: 0 0 15px rgba(255, 150, 255, 1); /* Stronger glow on focus */
+}
+
+div.latex-content {
+    display: block;
+    border: black solid 1px;
+    margin-top: 20px;
+    width: 800px;
+    height: 100px;
+}
+
+textarea {
+    display: block;
+    margin-top: 20px;
+    width: 800px;
+    height: 700px;
+}

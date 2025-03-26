@@ -1,10 +1,11 @@
 function Track(camera) {
 
-    this.length = 2000
-    const radius = this.length / (2 * pi + 2)
+    this.length = 200
+    let radius
 
     this.draw = () => {
         const ctx = camera.ctx
+        radius = this.length / (2 * pi + 2)
 
         ctx.save()
         {
@@ -41,6 +42,8 @@ function Track(camera) {
         }
         ctx.restore()
     }
+
+    this.update = ds => {}
 
     this.getCartesianCoordinates = s => {
         if (s < radius) {
