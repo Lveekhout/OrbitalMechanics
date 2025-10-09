@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Circular motion</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script src="../expressions-parser/js/parser-utils.js"></script>
+    <script src="../expressions-parser/js/parser.js"></script>
+    <script src="../expressions/js/expression-code/example-code.js"></script>
+    <script src="../expressions/js/expression-code/evaluate.js"></script>
+    <script src="../expressions/js/expression-code/normalise.js"></script>
+    <script src="../expressions/js/expression-code/simplify.js"></script>
+    <script src="../expressions/js/expression-code/derivative.js"></script>
+    <script src="../lib/Vector.js"></script>
+    <script src="js/Animation.js"></script>
+    <script src="js/index.js"></script>
+</head>
+<body>
+<table border="1" cellpadding="0" cellspacing="0">
+    <tr>
+        <td style="margin: 0; padding: 3px; width: 50%">
+            <input id="input1" class="syntax_ok" value="sin(t(pi))+2" oninput="parseExpr(event)" style="margin: 0; padding: 6px">
+        </td>
+        <td style="margin: 0; padding: 3px">
+            <input id="input2" class="syntax_ok" value="(2pi)t/10" oninput="parseExpr(event)" style="margin: 0; padding: 6px">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p id="errormessage1"></p>
+        </td>
+        <td>
+            <p id="errormessage2"></p>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <canvas id="canvas" width="920" height="640"></canvas>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="margin: 0; padding: 10px">
+            <button onclick="anim.start()">start</button>
+            <button onclick="">suspend</button>
+            <button onclick="">resume</button>
+            <button onclick="anim.stop()">stop</button>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

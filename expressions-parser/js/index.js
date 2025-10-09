@@ -10,7 +10,7 @@ const checkSyntax = e => {
         // expr = wrapDerivative(expr, {type: 'variable', display: ['x', '\u{1d465}', 'x']})
         // expr = takeDerivative(expr)
         document.querySelector('input').classList.remove('syntax_error')
-        document.querySelector('textarea').textContent = JSON.stringify(expr, null, 2)
+        document.querySelector('textarea').textContent = JSON.stringify(expr, null, 4)
         document.querySelector('#latex-compiled').innerHTML = `\\[${toLatex(expr)}\\]`
         MathJax.typesetPromise()
     } catch (e) {

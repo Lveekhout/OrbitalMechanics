@@ -1,39 +1,24 @@
 ### URL
-https://jacquev6.github.io/DrawGrammar/
+* https://jacquev6.github.io/DrawGrammar/
+* https://mdkrajnak.github.io/ebnftest/
 
-### Voorbeeld
-expr = term, whitespace, { ( '+' | '-' ) , whitespace, term, whitespace, };
+### Voorbeeld EBNF
+```
+expression = term, { ('+' | '-'), term };
 
-term = { factor, whitespace, ( '*' | '/' ), whitespace }, factor, whitespace;
+term = ['-'], factor, { [ '*' | '/' ], factor };
 
-factor = (integer | '(', whitespace, expr, whitespace, ')'), whitespace;
+factor = power, {'^', ['-'], power};
 
-integer = [ '-', whitespace ], digit, { digit }, whitespace;
+power = '(', expression, ')' | constant | number | variable | function;
 
-digit = '0' | '1' | '...' | '9';
+function = ('sin' | 'cos' | 'tan' | 'ln' | 'sqrt'), '(', expression, ')';
 
-whitespace = {'space'|'tab'|'linefeed'|'carriage return'};
+constant = 'e' | 'pi' | 'i';
 
+number = digit, { digit }, [ '.', digit, { digit } ];
 
-### Alternatief MET unary minus
-(* Updated mathematical expression parser syntax with unary minus *)
+variable = 'a' | 'b' | 'c' | 'n' | 'r' | 'x' | 'y' | 'z';
 
-expression = [ '-' ], term, { ('+' | '-'), term };
-
-term = factor, { ('*' | '/'), factor };
-
-factor = power, { '^', power };
-
-power = '(', expression, ')' | constante | number | variable | function;
-
-function = ('sin' | 'cos' | 'tan' | 'ln' ), '(', expression, ')';
-
-constante = 'e' | 'pi';
-
-number = ['-'], digit, { digit }, [ '.', digit, { digit } ];
-
-variable = 'a' | '...' | 'z';
-
-digit = '0' | '...' | '9';
-
-whitespace = {"' '"|'\t'|'\n'|'\r'};
+digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+```

@@ -2,27 +2,23 @@ const negate = expr => {
     switch (expr.type) {
         case 'integer':
             expr.value = -expr.value
-            break
+            return expr
+        case 'constant':
         case 'variable':
-            expr.minus = true
-            break
         case 'multiply':
         case 'add':
-            expr = {type: 'multiply', values: [{type: 'integer', value: -1}, expr]}
-            break
         case 'fraction':
-            expr = {type: 'multiply', values: [{type: 'integer', value: -1}, expr]}
-            // expr.numerator = negate(expr.numerator)
-            break
         case 'exponent':
-            expr = {type: 'multiply', values: [{type: 'integer', value: -1}, expr]}
-            break
+        case 'function':
+            return {type: 'negate', value: expr}
+        case 'negate':
+            return expr.value
         default:
             throw Error(`negate: unhandled type: [${expr.type}]`)
     }
-    return expr
 }
- const addMultiply = (expr, multiply) => {
+
+const addMultiply = (expr, multiply) => {
     if (expr.type === 'multiply') {
         expr.values.push(multiply)
         return expr
@@ -31,7 +27,7 @@ const negate = expr => {
     }
  }
 
- const  createNumber = str => {
+const createNumber = str => {
     if (str.includes('.')) {
         const part = str.split('.')
         const factor = Math.pow(10, part[1].length)
@@ -45,4 +41,14 @@ const negate = expr => {
         if (isFinite(num)) return {type: 'integer', value: num}
         else throw Error(`createNumber: not finite: [${str}]`)
     }
+ }
+
+const map2PowerTower = a => {
+    let result = a[a.length - 1]
+    for (let i = a.length - 2; i >= 0 ; i--) {
+        if (a[i] === '-') {
+            result = negate(result)
+        } else result = {type: 'exponent', base: a[i], index: result}
+    }
+    return result
  }
