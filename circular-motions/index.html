@@ -11,7 +11,9 @@
     <script src="../expressions/js/expression-code/normalise.js"></script>
     <script src="../expressions/js/expression-code/simplify.js"></script>
     <script src="../expressions/js/expression-code/derivative.js"></script>
+    <script src="../expressions/js/expression-code/factorise.js"></script>
     <script src="../lib/Vector.js"></script>
+    <script src="../lib/map.js"></script>
     <script src="js/Animation.js"></script>
     <script src="js/index.js"></script>
 </head>
@@ -40,9 +42,17 @@
     </tr>
     <tr>
         <td colspan="2" style="margin: 0; padding: 10px">
+            <input id="sdi" type="checkbox">displacement&nbsp;&nbsp;&nbsp;&nbsp;
+            <input id="svi" type="checkbox" checked>velocity&nbsp;&nbsp;&nbsp;&nbsp;
+            <input id="sai" type="checkbox">acceleration&nbsp;&nbsp;&nbsp;&nbsp;
+            <input id="sji" type="checkbox">jerk&nbsp;&nbsp;&nbsp;&nbsp;
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="margin: 0; padding: 10px">
             <button onclick="anim.start()">start</button>
-            <button onclick="">suspend</button>
-            <button onclick="">resume</button>
+            <button onclick="" disabled>suspend</button>
+            <button onclick="" disabled>resume</button>
             <button onclick="anim.stop()">stop</button>
         </td>
     </tr>

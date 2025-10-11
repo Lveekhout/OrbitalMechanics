@@ -27,6 +27,7 @@ function Animation() {
     const animation = ms => {
         if (animating) window.requestAnimationFrame(animation)
 
+        // if (ms - currenttime < 200) return
         this.set.forEach(e => {
             e(ms - starttime, ms - currenttime)
         })
