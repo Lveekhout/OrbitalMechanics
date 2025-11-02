@@ -1,6 +1,4 @@
-let r
-let theta
-let rx, ry, vx, vy, ax, ay, jx, jy
+let sx, sy, vx, vy, ax, ay, jx, jy
 
 const anim = new Animation2d()
 
@@ -47,26 +45,37 @@ const draw = (canvas, ctx, camera, ms, dms) => {
 
             ctx.restore()
         } // Raster
-        if (r && theta) {
+        if (sx && sy) {
             ctx.save()
 
             const time = new Map([['t', ms / 1000]])
-            const rxv = evaluate(rx, time); const ryv = evaluate(ry, time)
+            ctx.beginPath()
+            ctx.moveTo(evaluate(sx, time), -evaluate(sy, time))
+            for (let i = ms; i < ms + 5000; i += 100) {
+                time.set('t', i / 1000)
+                ctx.lineTo(evaluate(sx, time), -evaluate(sy, time))
+            }
+            ctx.lineWidth = 1 / camera.scale
+            ctx.strokeStyle = '#aaa'
+            ctx.stroke()
+
+            time.set('t', ms / 1000)
+            const sxv = evaluate(sx, time); const syv = evaluate(sy, time)
             const vxv = evaluate(vx, time); const vyv = evaluate(vy, time)
             const axv = evaluate(ax, time); const ayv = evaluate(ay, time)
             const jxv = evaluate(jx, time); const jyv = evaluate(jy, time)
+            if (document.querySelector('input#sdi').checked) new Vector([sxv, syv]).draw(ctx, camera, 8, 'red')
+            if (document.querySelector('input#svi').checked) new Vector([sxv, syv], [vxv, vyv]).draw(ctx, camera, 8, 'green', 1/5)
+            if (document.querySelector('input#sai').checked) new Vector([sxv, syv], [axv, ayv]).draw(ctx, camera, 8, 'blue', 1/5)
+            if (document.querySelector('input#sji').checked) new Vector([sxv, syv], [jxv, jyv]).draw(ctx, camera, 8, 'purple', 1/15)
 
-            if (document.querySelector('input#sdi').checked) new Vector([rxv, ryv]).draw(ctx, camera, 8, 'red')
-            if (document.querySelector('input#svi').checked) new Vector([rxv, ryv], [vxv, vyv]).draw(ctx, camera, 8, 'green', 1/5)
-            if (document.querySelector('input#sai').checked) new Vector([rxv, ryv], [axv, ayv]).draw(ctx, camera, 8, 'blue', 1/5)
-            if (document.querySelector('input#sji').checked) new Vector([rxv, ryv], [jxv, jyv]).draw(ctx, camera, 8, 'purple', 1/15)
             ctx.beginPath()
-            ctx.arc(rxv, -ryv, 3 / camera.scale, 0, Math.PI * 2)
+            ctx.arc(sxv, -syv, 3 / camera.scale, 0, Math.PI * 2)
             ctx.fillStyle = 'black'
             ctx.fill()
 
             ctx.restore()
-        } // Balletje
+        } // Vectors & Balletje
     } // Layers
     ctx.restore()
 
@@ -92,39 +101,33 @@ const parseExpr = e => {
     switch (e.target.id) {
         case 'input1':
             try {
-                r = new Parser(e.target.value).expr
+                sx = new Parser(e.target.value).expr
+                vx = completeSimplify(derivativeExpr(sx, 't'))
+                ax = completeSimplify(derivativeExpr(vx, 't'))
+                jx = completeSimplify(derivativeExpr(ax, 't'))
                 e.target.classList.remove('syntax_error')
                 document.querySelector('p#errormessage1').innerHTML = '&nbsp;'
             } catch (ex) {
-                r = rx = ry = vx = vy = ax = ay = jx = jy = undefined
+                sx = vx = ax = jx = undefined
                 e.target.classList.add('syntax_error')
                 document.querySelector('p#errormessage1').innerHTML = ex.message
             }
             break
         case 'input2':
             try {
-                theta = new Parser(e.target.value).expr
+                sy = new Parser(e.target.value).expr
+                vy = completeSimplify(derivativeExpr(sy, 't'))
+                ay = completeSimplify(derivativeExpr(vy, 't'))
+                jy = completeSimplify(derivativeExpr(ay, 't'))
                 e.target.classList.remove('syntax_error')
                 document.querySelector('p#errormessage2').innerHTML = '&nbsp;'
             } catch (ex) {
-                theta = rx = ry = vx = vy = ax = ay = jx = jy = undefined
+                sy = vy = ay = jy = undefined
                 e.target.classList.add('syntax_error')
                 document.querySelector('p#errormessage2').innerHTML = ex.message
             }
             break
         default:
     }
-
-    if (r && theta) {
-        rx = {type: 'multiply', values: [r, {type: 'function', function: 'cos', input: theta}]}
-        ry = {type: 'multiply', values: [r, {type: 'function', function: 'sin', input: theta}]}
-        vx = completeSimplify(derivativeExpr(rx, 't'))
-        vy = completeSimplify(derivativeExpr(ry, 't'))
-        ax = completeSimplify(derivativeExpr(vx, 't'))
-        ay = completeSimplify(derivativeExpr(vy, 't'))
-        jx = completeSimplify(derivativeExpr(ax, 't'))
-        jy = completeSimplify(derivativeExpr(ay, 't'))
-    }
-
     // draw()
 }

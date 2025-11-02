@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Parametric Equations</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script src="../expressions-parser/js/parser-utils.js"></script>
+    <script src="../expressions-parser/js/parser.js"></script>
+    <script src="../expressions/js/expression-code/example-code.js"></script>
+    <script src="../expressions/js/expression-code/evaluate.js"></script>
+    <script src="../expressions/js/expression-code/normalise.js"></script>
+    <script src="../expressions/js/expression-code/simplify.js"></script>
+    <script src="../expressions/js/expression-code/derivative.js"></script>
+    <script src="../expressions/js/expression-code/factorise.js"></script>
+    <script src="../lib/Vector.js"></script>
+    <script src="../lib/map.js"></script>
+    <script src="js/Animation2d.js"></script>
+    <script src="js/index.js"></script>
+</head>
+<body>
+<table border="1" cellpadding="0" cellspacing="0">
+    <tr>
+        <td style="margin: 0; padding: 3px; width: 50%">
+            <label>x=</label>
+            <input id="input1" class="syntax_ok" value="0.2cos(2t)+2.2cos(t)" oninput="parseExpr(event)" style="margin: 0; padding: 6px">
+        </td>
+        <td style="margin: 0; padding: 3px">
+            <label>y=</label>
+            <input id="input2" class="syntax_ok" value="0.2sin(2t)-2.2sin(t)" oninput="parseExpr(event)" style="margin: 0; padding: 6px">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p id="errormessage1"></p>
+        </td>
+        <td>
+            <p id="errormessage2"></p>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <canvas id="canvas" width="920" height="640"></canvas>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="margin: 0; padding: 10px">
+            <input id="sdi" type="checkbox">displacement&nbsp;&nbsp;&nbsp;&nbsp;
+            <input id="svi" type="checkbox" checked>velocity&nbsp;&nbsp;&nbsp;&nbsp;
+            <input id="sai" type="checkbox">acceleration&nbsp;&nbsp;&nbsp;&nbsp;
+            <input id="sji" type="checkbox">jerk&nbsp;&nbsp;&nbsp;&nbsp;
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="margin: 0; padding: 10px">
+            <button onclick="anim.start()">start</button>
+            <button onclick="" disabled>suspend</button>
+            <button onclick="" disabled>resume</button>
+            <button onclick="anim.stop()">stop</button>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
