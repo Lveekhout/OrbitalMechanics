@@ -2,14 +2,28 @@ const camera = {x: 20, y: 20, scale: 30}
 const visor = { x: null, y: null, visible: false }
 
 let example
+let canvasMeasurements
+let selectedExpr
 // let derivative
 
 window.onload = e => {
     document.querySelector('input').dispatchEvent(new Event('input'))
 
+    document.getElementById('canvas').addEventListener('click', event => {
+        if (selectedExpr) {
+            if (selectedExpr.expr.type === 'integer') {
+                window.requestAnimationFrame(draw)
+                selectedExpr.expr.value += 1
+            }
+        }
+    })
+
     document.getElementById('canvas').addEventListener('mousemove', event => {
         window.requestAnimationFrame(draw)
         event.preventDefault()
+
+        // console.log(`${(event.offsetX - camera.x) / camera.scale}\t${(event.offsetY - camera.y) / camera.scale}`)
+        selectedExpr = selectExpr(canvasMeasurements, (event.offsetX - camera.x) / camera.scale, (event.offsetY - camera.y) / camera.scale)
 
         visor.x = event.offsetX
         visor.y = event.offsetY
@@ -136,6 +150,7 @@ const draw = ms => {
             ctx.textBaseline = "top" // type CanvasTextBaseline = "alphabetic" | "bottom" | "hanging" | "ideographic" | "middle" | "top";
             // ctx.textAlign = "start" // type CanvasTextAlign = "center" | "end" | "left" | "right" | "start";
 
+            canvasMeasurements = toCanvasMeasured(ctx, example)
             const m = toCanvas(ctx, example, [0, 0])
         } // Text
         {
@@ -160,7 +175,18 @@ const draw = ms => {
             ctx.stroke()
             ctx.restore()
             // console.timeEnd('toGraph')
-        }
+        } // grafiek
+        {
+            if (selectedExpr) {
+                ctx.save()
+                ctx.beginPath()
+                ctx.rect(selectedExpr.measurement.x, -selectedExpr.measurement.y, selectedExpr.measurement.w, selectedExpr.measurement.h)
+                ctx.globalAlpha = 4 / 10
+                ctx.fillStyle = 'blue'
+                ctx.fill()
+                ctx.restore()
+            }
+        } // selectedExpr
     } // Layers
     ctx.restore()
 }
@@ -235,14 +261,70 @@ const tempProbeer = () => {
     ctx.save()
     ctx.translate(camera.x, camera.y)
     ctx.scale(camera.scale, camera.scale)
-    ctx.fillText('ZZZ', 0, 0)
 
-    ctx.lineWidth = 1 / 10
+    ctx.font = '1.0px Courier'
+    ctx.textBaseline = "top" // type CanvasTextBaseline = "alphabetic" | "bottom" | "hanging" | "ideographic" | "middle" | "top";
+    // ctx.textAlign = "center" // type CanvasTextAlign = "center" | "end" | "left" | "right" | "start";
+    ctx.textRendering = 'optimizeSpeed'
+
+    const text = 'Laurens'
+    ctx.fillText(text, 0, 0)
+
+    ctx.lineWidth = 1 / 2 / camera.scale
     ctx.strokeStyle = 'green'
-    const measure = ctx.measureText('ZZZ')
-    ctx.strokeRect(0,0,measure.width, -measure.actualBoundingBoxAscent)
+    const measure = ctx.measureText(text)
+    ctx.strokeRect(0,0, measure.width, measure.fontBoundingBoxDescent)
+
+    ctx.beginPath()
+    ctx.moveTo(0, measure.fontBoundingBoxDescent)
+    ctx.lineTo(10, measure.fontBoundingBoxDescent)
+    ctx.lineWidth = 1 / 2 / camera.scale
+    ctx.strokeStyle = 'purple'
+    ctx.stroke()
+
+    // ctx.beginPath()
+    // ctx.moveTo(measure.actualBoundingBoxLeft, measure.fontBoundingBoxAscent)
+    // ctx.lineTo(measure.actualBoundingBoxRight, measure.fontBoundingBoxAscent)
+    // ctx.lineTo(measure.actualBoundingBoxRight, measure.fontBoundingBoxDescent)
+    // ctx.lineTo(measure.actualBoundingBoxLeft, measure.fontBoundingBoxDescent)
+    // ctx.closePath()
+    // ctx.lineWidth = 1 / 2 / camera.scale
+    // ctx.strokeStyle = 'red'
+    // ctx.stroke()
+
+    ctx.beginPath()
+    ctx.arc(0, 0, 2 / camera.scale, 0, Math.PI * 2)
+    ctx.fillStyle = 'black'
+    ctx.fill()
 
     ctx.restore()
 
     return measure
+}
+
+const drawProbeer = () => {
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d')
+
+    ctx.save()
+    ctx.translate(camera.x, camera.y)
+    ctx.scale(camera.scale, camera.scale)
+    ctx.beginPath()
+    ctx.rect(canvasMeasurements.measurement.x, -canvasMeasurements.measurement.y, canvasMeasurements.measurement.w, canvasMeasurements.measurement.h)
+    ctx.globalAlpha = 4 / 10
+    ctx.fillStyle = 'blue'
+    ctx.fill()
+    ctx.restore()
+}
+
+const selectExpr = (cm, x, y) => { // cm = CanvasMeasurment
+    if (x >= cm.measurement.x && x <= cm.measurement.x + cm.measurement.w &&
+        -y <= cm.measurement.y && -y >= cm.measurement.y - cm.measurement.h) {
+        for (let i = 0; i < cm.children.length; i++) {
+            const child = selectExpr(cm.children[i], x, y)
+            if (child) return child
+        }
+        if (-y <= cm.measurement.y && -y >= cm.measurement.y - cm.measurement.sh) return cm
+        else return undefined
+    } else return undefined
 }

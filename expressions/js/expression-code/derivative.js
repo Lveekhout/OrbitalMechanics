@@ -101,6 +101,7 @@ const derivativeExpr = (expr, v = 'x') => {
         case 'function':
             if (expr.function === 'sin') return {type: 'multiply', values: [{type: "function", function: "cos", input: JSON.parse(JSON.stringify(expr.input))}, derivativeExpr(expr.input, v)]}
             if (expr.function === 'cos') return {type: 'multiply', values: [negate({type: "function", function: "sin", input: JSON.parse(JSON.stringify(expr.input))}), derivativeExpr(expr.input, v)]}
+            if (expr.function === 'ln') return {type: 'fraction', numerator: derivativeExpr(expr.input, v), denominator: expr.input}
             else throw `derivativeExpr: not yet implemented: ${expr.function}`
         case 'negate':
             return {type: expr.type, value: derivativeExpr(expr.value, v)}

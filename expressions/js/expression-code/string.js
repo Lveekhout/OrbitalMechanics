@@ -42,4 +42,3 @@ const toString = (expr, level) => {
             return `[error: unknown element: ${expr.type}]`
     }
 }
-

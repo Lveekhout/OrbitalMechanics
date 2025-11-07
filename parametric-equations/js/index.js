@@ -49,15 +49,17 @@ const draw = (canvas, ctx, camera, ms, dms) => {
             ctx.save()
 
             const time = new Map([['t', ms / 1000]])
-            ctx.beginPath()
-            ctx.moveTo(evaluate(sx, time), -evaluate(sy, time))
-            for (let i = ms; i < ms + 5000; i += 100) {
-                time.set('t', i / 1000)
-                ctx.lineTo(evaluate(sx, time), -evaluate(sy, time))
+            if (document.querySelector('input#trace').checked) {
+                ctx.beginPath()
+                ctx.moveTo(evaluate(sx, time), -evaluate(sy, time))
+                for (let i = ms; i < ms + 5000; i += 100) {
+                    time.set('t', i / 1000)
+                    ctx.lineTo(evaluate(sx, time), -evaluate(sy, time))
+                }
+                ctx.lineWidth = 1 / camera.scale
+                ctx.strokeStyle = '#aaa'
+                ctx.stroke()
             }
-            ctx.lineWidth = 1 / camera.scale
-            ctx.strokeStyle = '#aaa'
-            ctx.stroke()
 
             time.set('t', ms / 1000)
             const sxv = evaluate(sx, time); const syv = evaluate(sy, time)
@@ -129,5 +131,5 @@ const parseExpr = e => {
             break
         default:
     }
-    // draw()
+    anim.drawAll()
 }

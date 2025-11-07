@@ -14,7 +14,7 @@
     <script src="../expressions/js/expression-code/factorise.js"></script>
     <script src="../lib/Vector.js"></script>
     <script src="../lib/map.js"></script>
-    <script src="js/Animation2d.js"></script>
+    <script src="../lib/Animation2d.js"></script>
     <script src="js/index.js"></script>
 </head>
 <body>
@@ -44,10 +44,11 @@
     </tr>
     <tr>
         <td colspan="2" style="margin: 0; padding: 10px">
-            <input id="sdi" type="checkbox">displacement&nbsp;&nbsp;&nbsp;&nbsp;
-            <input id="svi" type="checkbox" checked>velocity&nbsp;&nbsp;&nbsp;&nbsp;
-            <input id="sai" type="checkbox">acceleration&nbsp;&nbsp;&nbsp;&nbsp;
-            <input id="sji" type="checkbox">jerk&nbsp;&nbsp;&nbsp;&nbsp;
+            <input id="sdi" type="checkbox" oninput="anim.drawAll()">displacement&nbsp;&nbsp;&nbsp;&nbsp;
+            <input id="svi" type="checkbox" oninput="anim.drawAll()" checked>velocity&nbsp;&nbsp;&nbsp;&nbsp;
+            <input id="sai" type="checkbox" oninput="anim.drawAll()">acceleration&nbsp;&nbsp;&nbsp;&nbsp;
+            <input id="sji" type="checkbox" oninput="anim.drawAll()">jerk&nbsp;&nbsp;&nbsp;&nbsp;
+            <input id="trace" type="checkbox" oninput="anim.drawAll()">trace&nbsp;&nbsp;&nbsp;&nbsp;
         </td>
     </tr>
     <tr>
