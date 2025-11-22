@@ -178,7 +178,8 @@ const toCanvasMeasured = (ctx, expr, pos = [0, 0], level = 0) => {
             const m = ctx.measureText('+')
 
             const children = []
-            let w = h = 0
+            let w = 0
+            let h = 0
             for (let i = 0; i < expr.values.length; i++) {
                 const im = toCanvasMeasured(ctx, expr.values[i], [pos[0] + w, pos[1] - m.fontBoundingBoxDescent - gapY], level + 1)
                 children.push(im)
@@ -191,7 +192,8 @@ const toCanvasMeasured = (ctx, expr, pos = [0, 0], level = 0) => {
             const m = ctx.measureText('*')
 
             const children = []
-            let w = h = 0
+            let w = 0
+            let h = 0
             for (let i = 0; i < expr.values.length; i++) {
                 const im = toCanvasMeasured(ctx, expr.values[i], [pos[0] + w, pos[1] - m.fontBoundingBoxDescent - gapY], level + 1)
                 children.push(im)
