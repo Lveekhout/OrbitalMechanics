@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JWT</title>
+    <script>
+        //
+        // ---- Helper: base64url encoding ----
+        //
+        function base64urlEncode(bytes) {
+            let str = btoa(String.fromCharCode(...bytes));
+            return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        }
+
+        //
+        // ---- Helper: decode PEM → ArrayBuffer ----
+        //
+        function pemToArrayBuffer(pem) {
+            // verwijder header/footer + whitespace
+            const b64 = pem
+                .replace(/-----BEGIN [\w ]+-----/, '')
+                .replace(/-----END [\w ]+-----/, '')
+                .replace(/\s+/g, '');
+
+            const raw = atob(b64);
+            const buffer = new Uint8Array(raw.length);
+            for (let i = 0; i < raw.length; i++) buffer[i] = raw.charCodeAt(i);
+
+            return buffer.buffer;
+        }
+
+        //
+        // ---- Import RSA private key (PKCS#8) ----
+        //
+        async function importPrivateKeyFromPem(pem) {
+            const keyData = pemToArrayBuffer(pem);
+
+            return crypto.subtle.importKey(
+                "pkcs8",
+                keyData,
+                {
+                    name: "RSASSA-PKCS1-v1_5",
+                    hash: "SHA-256",
+                },
+                false,
+                ["sign"]
+            );
+        }
+
+        //
+        // ---- Create RS256 JWT ----
+        //
+        async function createRS256Jwt(payload, privateKeyPem) {
+            const header = { alg: "RS256", typ: "JWT" };
+
+            const enc = new TextEncoder();
+
+            const encodedHeader = base64urlEncode(enc.encode(JSON.stringify(header)));
+            const encodedPayload = base64urlEncode(enc.encode(JSON.stringify(payload)));
+            const signingInput = `${encodedHeader}.${encodedPayload}`;
+
+            const privateKey = await importPrivateKeyFromPem(privateKeyPem);
+
+            const signature = await crypto.subtle.sign(
+                {
+                    name: "RSASSA-PKCS1-v1_5",
+                },
+                privateKey,
+                enc.encode(signingInput)
+            );
+
+            const encodedSignature = base64urlEncode(new Uint8Array(signature));
+
+            return `${signingInput}.${encodedSignature}`;
+        }
+
+        //
+        // ---- VOORBEELD ----
+        //
+        (async () => {
+            const privateKeyPem = `
+-----BEGIN PRIVATE KEY-----
+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`;
+
+            const token = await createRS256Jwt(
+                { sub: "123", admin: true, iat: Math.floor(Date.now() / 1000) },
+                privateKeyPem
+            );
+
+            console.log("RS256 JWT:", token);
+        })();
+    </script>
+</head>
+<body>
+
+</body>
+</html>

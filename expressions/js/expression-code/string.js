@@ -1,5 +1,4 @@
-const toString = (expr, level) => {
-    if (!level) level = 0
+const toString = (expr, level = 0) => {
     switch (expr.type) {
         case 'constant':
             return expr.display[0]

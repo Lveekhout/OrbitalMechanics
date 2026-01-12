@@ -2,7 +2,7 @@ const substitute = (expr = {type: "integer", value: 0}, vars = new Map()) => {
     const recurs = expr => {
         switch (expr.type) {
             case 'variable': {
-                if (vars.has(expr.display[0])) return JSON.parse(JSON.stringify(vars.get(expr.display[0])))
+                if (vars.has(expr.display[0])) return JSON.parse(JSON.stringify(vars.getAsExpr(expr.display[0])))
                 else return JSON.parse(JSON.stringify(expr))
             }
             case 'constant':
@@ -25,3 +25,20 @@ const substitute = (expr = {type: "integer", value: 0}, vars = new Map()) => {
     }
     return recurs(expr)
 }
+
+Object.defineProperty(Map.prototype, "getAsExpr", {
+    value: function (input) {
+        const value = this.get(input)
+        switch (value.constructor.name) {
+            case 'Number':
+                return createExpr(String(value))
+            case 'Object':
+                return value
+            default:
+                throw(`getAsExpr: unknown value.constructor.name: [${value.constructor.name}]`)
+        }
+    },
+    writable: true,
+    configurable: false,
+    enumerable: false // zodat hij niet in for..in loops verschijnt
+})

@@ -1,15 +1,16 @@
 const camera = {x: 1024 / 2, y: 768 / 2, scale: 1 / 37000}
 const visor = {x: null, y: null, visible: false}
 const nogGoeieNaamVoorBedenken = 1
-const orbit = new EarthOrbit(new Vector(6378e3 + 1400e3, 0).p, new Vector(7158.493487102268, Math.PI * (1/2)).p)
+const orbit = new EarthOrbit(new Vector(6378e3 + 1400e3, 0).p, new Vector(8158.493487102268, Math.PI * (1/2)).p)
+// const orbit = new EarthOrbit(new Vector(6378e3 + 1400e3, 0).p, new Vector(7158.493487102268, Math.PI * (1/2)).p)
 const orbits = [
-    // orbit,
+    orbit,
     // orbit.copy().setCartesianAngle(0.01),
     // new EarthOrbit(new Vector(6378e3 + 35785280.291919015, 0).p, new Vector(3074.5984777015988, Math.PI * (1/2)).p), // Geosynchronous orbit
     // new EarthOrbit(new Vector(6378e3 + 433e3, 0).p, new Vector(7652.7777777, Math.PI * (1/2)).p), // ISS orbit
     // new EarthOrbit(new Vector(6378e3 + 2800e3, 0).p, new Vector(3000, Math.PI * (1 / 2)).p), // r=a (a=14775947.678937579)
     // new EarthOrbit(new Vector(6378e3 + 165e3, 0).p, new Vector(27337 / 3.6, Math.PI * (1 / 2)).p), // r=a (a=14775947.678937579)
-    new EarthOrbit(new Vector(6378e3 + 0, Math.PI * (1 / 2)).p, new Vector(1000 / 36, 1.6).p) // Lancering
+    // new EarthOrbit(new Vector(6378e3 + 0, Math.PI * (1 / 2)).p, new Vector(1000 / 36, 1.6).p) // Lancering
     // new EarthOrbit(new Vector(6378e3 + 4e3, Math.PI * (1 / 2)).p, new Vector(0, 4.7).p) // Vrije val
 ]
 let cms // current miliseconds

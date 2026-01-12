@@ -1,22 +1,23 @@
-const simplifyExpr = expr => {
+const simplifyExpr = (expr, vars = new Map()) => {
     switch(expr.type) {
         case 'integer':
         case 'constant':
             return JSON.parse(JSON.stringify(expr))
         case 'variable':
-            return JSON.parse(JSON.stringify(expr)) // substitude eventuele variabele waarde
+            if (vars.has(expr.display[0])) return JSON.parse(JSON.stringify(vars.getAsExpr(expr.display[0])))
+            else return JSON.parse(JSON.stringify(expr))
         case 'add':
-            return simplifyAdd(normaliseExpr(expr))
+            return simplifyAdd(normaliseExpr(expr), vars)
         case 'multiply':
-            return simplifyMultiply(normaliseExpr(expr))
+            return simplifyMultiply(normaliseExpr(expr), vars)
         case 'exponent':
-            return simplifyExponent(expr)
+            return simplifyExponent(expr, vars)
         case 'fraction':
-            return simplifyFraction(expr)
+            return simplifyFraction(expr, vars)
         case 'function':
-            return simplifyFunction(expr)
+            return simplifyFunction(expr, vars)
         case 'negate':
-            return simplifyNegate(expr)
+            return simplifyNegate(expr, vars)
         default:
             throw `simplifyExpr: onbekend type: ${expr.type}`
     }
@@ -35,9 +36,9 @@ const completeSimplify = (expr, max = 3) => {
     return JSON.parse(after)
 }
 
-const simplifyAdd = expr => {
+const simplifyAdd = (expr, vars) => {
     if (expr.type === 'add') {
-        const rest = expr.values.map(e => simplifyExpr(e))
+        const rest = normaliseExpr(expr).values.map(e => simplifyExpr(e, vars))
         const integers = rest.filterInPlace(e => e.type === 'integer' || (e.type === 'negate' && e.value.type === 'integer'))
         const fract_int = rest.filterInPlace(e => isIntegerFraction(e))
 
@@ -61,9 +62,9 @@ const simplifyAdd = expr => {
     } else return JSON.parse(JSON.stringify(expr))
 }
 
-const simplifyMultiply = expr => {
+const simplifyMultiply = (expr, vars) => {
     if (expr.type === 'multiply') {
-        const rest = expr.values.map(e => simplifyExpr(e))
+        const rest = normaliseExpr(expr).values.map(e => simplifyExpr(e, vars))
         if (rest.anyMatch(e => e.type === 'integer' && e.value === 0)) return {type: 'integer', value: 0}
         const integers = rest.filterInPlace(e => e.type === 'integer' || (e.type === 'negate' && e.value.type === 'integer'))
         const fract_int = rest.filterInPlace(e => isIntegerFraction(e))
@@ -77,7 +78,7 @@ const simplifyMultiply = expr => {
         fract_int.forEach(e => den *= e.type === 'negate' ? e.value.denominator.value : e.denominator.value)
         const answer = {type: 'fraction', numerator: createExpr(String(num)), denominator: createExpr(String(den))}
         answer.numerator.value *= prod
-        const result = {type: 'multiply', values: [simplifyFraction(answer)].concat(rest)}
+        const result = {type: 'multiply', values: [simplifyFraction(answer, vars)].concat(rest)}
 
         if (result.values.length === 0) return {type: 'integer', value: 0}
         else if (result.values.length === 1) return result.values[0]
@@ -117,10 +118,10 @@ const simplifyMultiply_OG = expr => {
     } else return JSON.parse(JSON.stringify(expr))
 }
 
-const simplifyExponent = expr => {
+const simplifyExponent = (expr, vars) => {
     if (expr.type === 'exponent') {
-        const b = simplifyExpr(expr.base)
-        const i = simplifyExpr(expr.index)
+        const b = simplifyExpr(expr.base, vars)
+        const i = simplifyExpr(expr.index, vars)
 
         if (b.type === 'integer' && i.type === 'integer' && (b.value !== 0 || i.value !== 0)) return {type: 'integer', value: Math.pow(b.value, i.value)}
         if (b.type !== 'integer' && i.type === 'integer' && i.value === 0) return {type: 'integer', value: 1}
@@ -129,14 +130,13 @@ const simplifyExponent = expr => {
     } else return JSON.parse(JSON.stringify(expr))
 }
 
-const simplifyFraction = expr => {
+const simplifyFraction = (expr, vars) => {
     if (expr.type === 'fraction') {
-        const n = simplifyExpr(expr.numerator)
-        const d = simplifyExpr(expr.denominator)
-
+        const n = simplifyExpr(expr.numerator, vars)
+        const d = simplifyExpr(expr.denominator, vars)
+ 
         if (d.type === 'integer' && d.value === 0) {
             return {type: 'fraction', numerator: n, denominator: d}
-            // return createExpr('0')
         } else if (d.type === 'integer' && d.value === 1) {
             return n
         } else if (n.type === 'integer' && d.type === 'integer') {
@@ -146,46 +146,49 @@ const simplifyFraction = expr => {
                 return {type: 'fraction', numerator: {type: 'integer', value: n.value / hcf}, denominator: {type: 'integer', value: d.value / hcf}}
             }
         } else if (n.type === 'fraction' && d.type === 'fraction') {
-            return {
+            return simplifyFraction({
                 type: 'fraction',
                 numerator: {type: 'multiply', values: [n.numerator, d.denominator]},
                 denominator: {type: 'multiply', values: [n.denominator, d.numerator]}
-            }
+            }, vars)
         } else if (n.type !== 'fraction' && d.type === 'fraction') {
             return {
                 type: 'fraction',
-                numerator: {type: 'multiply', values: [n, d.denominator]},
+                numerator: normaliseExpr({type: 'multiply', values: [n, d.denominator]}),
                 denominator: d.numerator
             }
         } else if (n.type === 'fraction' && d.type !== 'fraction') {
             return {
                 type: 'fraction',
                 numerator: n.numerator,
-                denominator: {type: 'multiply', values: [n.denominator, d]}
+                denominator: normaliseExpr({type: 'multiply', values: [n.denominator, d]})
             }
         } else return {type: expr.type, numerator: n, denominator: d}
     } else return JSON.parse(JSON.stringify(expr))
 }
 
-const simplifyFunction = expr => {
+const simplifyFunction = (expr, vars) => {
     if (expr.type === 'function') {
-        const inp = simplifyExpr(expr.input)
-        if (expr.function === 'ln' && inp.type === 'constant' && inp.display[0] === 'e') return createExpr('1')
-        if (expr.function === 'ln' && inp.type === 'integer' && inp.value === 1) return createExpr('0')
-        if (expr.function === 'sqrt' && inp.type === 'integer' && Number.isInteger(Math.sqrt(inp.value))) return createExpr(String(Math.sqrt(inp.value)))
-        return {type: expr.type, function: expr.function, input: simplifyExpr(inp)}
+        const inp = simplifyExpr(expr.input, vars)
+        if (expr.function === 'ln' && inp.type === 'constant' && inp.display[0] === 'e')
+            return createExpr('1')
+        if (expr.function === 'ln' && inp.type === 'integer' && inp.value === 1)
+            return createExpr('0')
+        if (expr.function === 'sqrt' && inp.type === 'integer' && Number.isInteger(Math.sqrt(inp.value)))
+            return createExpr(String(Math.sqrt(inp.value)))
+        return {type: expr.type, function: expr.function, input: simplifyExpr(inp, vars)}
     } else return JSON.parse(JSON.stringify(expr))
 }
 
-const simplifyNegate = expr => {
+const simplifyNegate = (expr, vars) => {
     if (expr.type === 'negate') {
-        const v = simplifyExpr(expr.value)
+        const v = simplifyExpr(expr.value, vars)
         if (v.type === 'negate') return v.value
         return {type: expr.type, value: v}
     } else return JSON.parse(JSON.stringify(expr))
 }
 
-const isIntegerFraction = expr => {
+const isIntegerFraction = (expr) => {
     switch (expr.type) {
         case 'fraction':
             return expr.numerator.type === 'integer' && expr.denominator.type === 'integer' && expr.denominator.value !== 0

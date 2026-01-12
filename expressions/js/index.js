@@ -11,10 +11,10 @@ window.onload = e => {
 
     document.getElementById('canvas').addEventListener('click', event => {
         if (selectedExpr) {
-            if (selectedExpr.expr.type === 'integer') {
-                window.requestAnimationFrame(draw)
-                selectedExpr.expr.value += 1
-            }
+            window.requestAnimationFrame(draw)
+            // Object.keys(selectedExpr.expr).forEach(key => delete selectedExpr.expr[key])
+            // Object.assign(selectedExpr.expr, createExpr('a(1+2)'))
+            console.log(firstDisplayableWithinMultiply(selectedExpr.expr))
         }
     })
 
@@ -317,7 +317,7 @@ const drawProbeer = () => {
     ctx.restore()
 }
 
-const selectExpr = (cm, x, y) => { // cm = CanvasMeasurment
+const selectExpr = (cm, x, y) => { // cm = CanvasMeasurement
     if (x >= cm.measurement.x && x <= cm.measurement.x + cm.measurement.w &&
         -y <= cm.measurement.y && -y >= cm.measurement.y - cm.measurement.h) {
         for (let i = 0; i < cm.children.length; i++) {

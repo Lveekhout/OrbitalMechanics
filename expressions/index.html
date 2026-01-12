@@ -27,9 +27,11 @@
         <td style="margin: 0; padding: 3px">
 <!--            <input class="syntax_ok" value="(1/2)(3/4)(1/0)" oninput="parseExpr(event)" style="margin: 0; padding: 6px">-->
 <!--            <input class="syntax_ok" value="0+e+0" oninput="parseExpr(event)" style="margin: 0; padding: 6px">-->
-            <input class="syntax_ok" value="1+7/(5(4)(3)(2)(1))x^2+13/(6(5)(4)(3)(2)(1))x^3" oninput="parseExpr(event)" style="margin: 0; padding: 6px">
+<!--            <input class="syntax_ok" value="1+7/(5(4)(3)(2)(1))x^2+13/(6(5)(4)(3)(2)(1))x^3" oninput="parseExpr(event)" style="margin: 0; padding: 6px">-->
 <!--            <input class="syntax_ok" value="1+2+(1/2)+(1/2)" oninput="parseExpr(event)" style="margin: 0; padding: 6px">-->
 <!--            <input class="syntax_ok" value="1+2+3x+a(b-1)c" oninput="parseExpr(event)" style="margin: 0; padding: 6px">-->
+<!--            <input class="syntax_ok" value="(ab+2)(3+4)" oninput="parseExpr(event)" style="margin: 0; padding: 6px">-->
+            <input class="syntax_ok" value="1+2+1/2+(9/a)" oninput="parseExpr(event)" style="margin: 0; padding: 6px">
         </td>
         <td id="variables" rowspan="6" valign="top">
             <div style="width: 100%">
@@ -56,7 +58,8 @@
     <tr>
         <td style="padding: 10px">
             <button onclick="setExample(simplifyExpr(example))">simplify</button>
-            <button onclick="setExample(derivativeExpr(example, this.parentElement.children[2].value))">derivative</button>
+            <button onclick="setExample(simplifyExpr(example, samenstellen()))">simplify+</button>
+            <button onclick="setExample(derivativeExpr(example, this.parentElement.children[3].value))">derivative</button>
 <!--            <button onclick="setExample(completeSimplify(derivativeExpr(example), 100))">derivative(x)</button>-->
             <select>
                 <option value="x">dx</option>

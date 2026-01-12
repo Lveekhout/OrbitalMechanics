@@ -7,6 +7,8 @@ window.onload = e => {
 
     document.querySelector('input#input1').dispatchEvent(new Event('input'))
     document.querySelector('input#input2').dispatchEvent(new Event('input'))
+
+    document.querySelector('button').dispatchEvent(new Event('click'))
 }
 
 const draw = (canvas, ctx, camera, ms, dms) => {

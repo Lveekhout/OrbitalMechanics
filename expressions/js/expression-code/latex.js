@@ -1,5 +1,4 @@
-const toLatex = (expr, level) => {
-    if (!level) level = 0
+const toLatex = (expr, level = 0) => {
     switch (expr.type) {
         case 'variable':
         case 'constant':
@@ -20,7 +19,12 @@ const toLatex = (expr, level) => {
                 if (expr.values[i].type === 'add') result += ' \\left( ' + toLatex(expr.values[i], level + 1) + ' \\right) '
                 else result += toLatex(expr.values[i], level + 1)
 
-                if (i < expr.values.length - 1) result += ' \\cdot '
+                if (i < expr.values.length - 1) {
+                    // if (['integer', 'variable', 'constant', 'exponent', 'fraction', 'function'].includes(expr.values[i].type)) {
+                        if (['integer', 'fraction', 'negate'].includes(firstDisplayableWithinMultiply(expr.values[i + 1])))
+                            result += ' \\cdot '
+                    // }
+                }
 
                 // if (i < expr.values.length - 1) {
                 //     switch (true) {
@@ -68,18 +72,21 @@ const toLatex = (expr, level) => {
 
 const isNegative = expr => expr.type === 'negate' || (expr.type === 'integer' && expr.value < 0)
 
-const firstNonMultiply = expr => expr.type === 'multiply' ? firstNonMultiply(expr.values[0]) : expr.type
+// const firstNonMultiply = expr => expr.type === 'multiply' ? firstNonMultiply(expr.values[0]) : expr.type
 
-const lastNonMultiply = expr => expr.type === 'multiply' ? lastNonMultiply(expr.values[expr.values.length-1]) : expr.type
+// const lastNonMultiply = expr => expr.type === 'multiply' ? lastNonMultiply(expr.values[expr.values.length-1]) : expr.type
 
-const firstNonExponent = expr => expr.type === 'exponent' ? firstNonExponent(expr.base) : expr.type
+// const firstNonExponent = expr => expr.type === 'exponent' ? firstNonExponent(expr.base) : expr.type
 
-const lastNonExponent = expr => expr.type === 'exponent' ? lastNonExponent(expr.index) : expr.type
+// const lastNonExponent = expr => expr.type === 'exponent' ? lastNonExponent(expr.index) : expr.type
 
-// const firstDisplayable = expr => {
-//     switch (expr.type) {
-//         case 'add':
-//         case 'multiply':
-//             return firstDisplayable(expr.values[0])
-//     }
-// }
+const firstDisplayableWithinMultiply = expr => {
+    switch (expr.type) {
+        case 'multiply':
+            return firstDisplayableWithinMultiply(expr.values[0])
+        case 'exponent':
+            return firstDisplayableWithinMultiply(expr.base)
+        default:
+            return expr.type
+    }
+}

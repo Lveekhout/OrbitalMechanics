@@ -229,22 +229,27 @@ const toCanvasMeasured = (ctx, expr, pos = [0, 0], level = 0) => {
             w += m2.measurement.w
             h = Math.max(h, m.fontBoundingBoxDescent + gapY + m2.measurement.h)
             return {expr: expr, children: children, measurement: {x: pos[0], y: pos[1], w: w, h: h, sh: m.fontBoundingBoxDescent}}
-
         }
         case 'negate': {
             const m = ctx.measureText('-')
-            const m1 = toCanvasMeasured(ctx, expr.value, [pos[0], pos[1] - m.fontBoundingBoxDescent - gapY], level + 1).measurement
-            let w = m1[0]
-            return {expr: expr, measurement: [w, pos[1]]}
+            const children = []
+            const m1 = toCanvasMeasured(ctx, expr.value, [pos[0], pos[1] - m.fontBoundingBoxDescent - gapY], level + 1)
+            children.push(m1)
+            const w = m1.measurement.w
+            const h = m.fontBoundingBoxDescent + gapY + m1.measurement.h
+            return {expr: expr, children: children, measurement: {x: pos[0], y: pos[1], w: w, h: h, sh: m.fontBoundingBoxDescent}}
         }
         case 'function': {
             const txt = expr.function === 'sqrt' ? String.fromCodePoint(0x221a) : expr.function
             const m = ctx.measureText(txt)
-            const m1 = toCanvasMeasured(ctx, expr.input, [pos[0], pos[1] - m.fontBoundingBoxDescent - gapY], level + 1).measurement
-            let w = Math.max(m1[0], m.width)
-            return {expr: expr, measurement: [w, pos[1]]}
+            const children = []
+            const m1 = toCanvasMeasured(ctx, expr.input, [pos[0], pos[1] - m.fontBoundingBoxDescent - gapY], level + 1)
+            children.push(m1)
+            const w = Math.max(m.width, m1.measurement.w)
+            const h = m.fontBoundingBoxDescent + gapY + m1.measurement.h
+            return {expr: expr, children: children, measurement: {x: pos[0], y: pos[1], w: w, h: h, sh: m.fontBoundingBoxDescent}}
         }
-        case 'derivative': {
+        case 'derivative': { // TODO wat moeten we hier mee?
             const m = ctx.measureText('d')
             let w = 0
             const m1 = toCanvasMeasured(ctx, expr.expression, [pos[0] + w, pos[1] - m.fontBoundingBoxDescent - gapY], level + 1).measurement

@@ -12,7 +12,7 @@
     <script src="../expressions/js/expression-code/simplify.js"></script>
     <script src="../expressions/js/expression-code/derivative.js"></script>
     <script src="../expressions/js/expression-code/factorise.js"></script>
-    <script src="../lib/Vector.js"></script>
+    <script src="../lib/Vector_newstyle.js"></script>
     <script src="../lib/map.js"></script>
     <script src="../lib/Animation2d.js"></script>
     <script src="js/index.js"></script>
@@ -26,7 +26,7 @@
         </td>
         <td style="margin: 0; padding: 3px">
             <label>y=</label>
-            <input id="input2" class="syntax_ok" value="0.2sin(2t)-2.2sin(t)" oninput="parseExpr(event)" style="margin: 0; padding: 6px">
+            <input id="input2" class="syntax_ok" value="0.5sin(2t)-1.4sin(3t/2)" oninput="parseExpr(event)" style="margin: 0; padding: 6px">
         </td>
     </tr>
     <tr>
@@ -46,9 +46,9 @@
         <td colspan="2" style="margin: 0; padding: 10px">
             <input id="sdi" type="checkbox" oninput="anim.drawAll()">displacement&nbsp;&nbsp;&nbsp;&nbsp;
             <input id="svi" type="checkbox" oninput="anim.drawAll()" checked>velocity&nbsp;&nbsp;&nbsp;&nbsp;
-            <input id="sai" type="checkbox" oninput="anim.drawAll()">acceleration&nbsp;&nbsp;&nbsp;&nbsp;
+            <input id="sai" type="checkbox" oninput="anim.drawAll()" checked>acceleration&nbsp;&nbsp;&nbsp;&nbsp;
             <input id="sji" type="checkbox" oninput="anim.drawAll()">jerk&nbsp;&nbsp;&nbsp;&nbsp;
-            <input id="trace" type="checkbox" oninput="anim.drawAll()">trace&nbsp;&nbsp;&nbsp;&nbsp;
+            <input id="trace" type="checkbox" oninput="anim.drawAll()">look ahead&nbsp;&nbsp;&nbsp;&nbsp;
         </td>
     </tr>
     <tr>
