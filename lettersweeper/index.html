@@ -11,7 +11,25 @@
     </script>
 </head>
 <body>
-<canvas id="canvas" width="480" height="480"></canvas>
-<output id="output"></output>
+<table>
+    <tbody>
+    <tr style="vertical-align: top">
+        <td><canvas id="canvas" width="480" height="480"></canvas></td>
+        <td>
+            <div class="field">
+                <label for="naam" style="width: 100px">Naam</label>
+                <input id="naam">
+            </div>
+            <div class="field">
+                <label for="aantal" style="width: 100px">Aantal letters</label>
+                <input id="aantal">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td><output id="output"></output></td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>

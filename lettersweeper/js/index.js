@@ -15,11 +15,11 @@ window.onload = e => {
     })
     document.addEventListener('keypress', e => {
         const keyCode = e.keyCode & 223
-        if (keyCode >= 65 && keyCode <= 90) {
+        if (keyCode >= 65 && keyCode <= 90  && selected.x && selected.y) {
             matrix[selected.y][selected.x] = String.fromCharCode(keyCode)
             window.requestAnimationFrame(draw)
         }
-        if (e.keyCode >= 48 && e.keyCode <= 57) {
+        if (e.keyCode >= 48 && e.keyCode <= 57 && selected.x && selected.y) {
             matrix[selected.y][selected.x] = parseInt(String.fromCharCode(e.keyCode), 10)
             window.requestAnimationFrame(draw)
         }
