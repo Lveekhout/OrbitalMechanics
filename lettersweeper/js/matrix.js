@@ -1,21 +1,18 @@
-const matrix = [
-    [null, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
-    [undefined, 1, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
-    [undefined, undefined, 'A', undefined, undefined, undefined, undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
-]
-const selected = {x: undefined, y: undefined}
+//const matrix = [
+//    [1, 1, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+//    [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+//    [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+//    [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+//    [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+//    [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+//    [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+//    [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+//    [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+//    [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+//]
 
-const getOmliggend = (rij, cell) => {
-    return [[rij - 1, cell - 1], [rij - 1, cell], [rij - 1, cell + 1], [rij, cell - 1], [rij, cell + 1], [rij + 1, cell - 1], [rij + 1, cell], [rij + 1, cell + 1]]
-        .filter(v => v[0] > -1 && v[0] < 10 && v[1] > -1 && v[1] < 10)
-}
+const matrix = [[undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,1,0],[undefined,undefined,undefined,undefined,2,undefined,undefined,undefined,2,1],[undefined,undefined,undefined,undefined,4,"R",undefined,undefined,undefined,undefined],[undefined,undefined,undefined,"R",4,"N",undefined,undefined,undefined,undefined],[undefined,undefined,undefined,undefined,undefined,4,undefined,2,undefined,undefined],[undefined,undefined,undefined,undefined,undefined,"E","F",undefined,"F",1],[undefined,undefined,1,undefined,"P",undefined,"E",4,1,1],[undefined,undefined,undefined,"G",undefined,undefined,"U",2,0,0],[undefined,undefined,undefined,undefined,undefined,undefined,undefined,2,1,0],[undefined,undefined,undefined,undefined,undefined,undefined,undefined,"H",1,0]]
+
 const draw = ms => {
     const canvas = document.getElementById('canvas')
     const ctx = canvas.getContext('2d')

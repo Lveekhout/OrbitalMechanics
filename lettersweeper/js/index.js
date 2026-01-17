@@ -1,3 +1,5 @@
+const selected = {x: undefined, y: undefined}
+
 window.onload = e => {
     window.requestAnimationFrame(draw)
     document.getElementById('canvas').addEventListener('mousemove', e => {
@@ -15,12 +17,16 @@ window.onload = e => {
     })
     document.addEventListener('keypress', e => {
         const keyCode = e.keyCode & 223
-        if (keyCode >= 65 && keyCode <= 90  && selected.x && selected.y) {
+        if (keyCode >= 65 && keyCode <= 90  && Number.isInteger(selected.x) && Number.isInteger(selected.y)) {
             matrix[selected.y][selected.x] = String.fromCharCode(keyCode)
             window.requestAnimationFrame(draw)
         }
-        if (e.keyCode >= 48 && e.keyCode <= 57 && selected.x && selected.y) {
+        if (e.keyCode >= 48 && e.keyCode <= 57 && Number.isInteger(selected.x) && Number.isInteger(selected.y)) {
             matrix[selected.y][selected.x] = parseInt(String.fromCharCode(e.keyCode), 10)
+            window.requestAnimationFrame(draw)
+        }
+        if (e.keyCode === 32 && Number.isInteger(selected.x) && Number.isInteger(selected.y)) {
+            matrix[selected.y][selected.x] = undefined
             window.requestAnimationFrame(draw)
         }
     })
