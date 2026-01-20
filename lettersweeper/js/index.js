@@ -19,15 +19,24 @@ window.onload = e => {
         const keyCode = e.keyCode & 223
         if (keyCode >= 65 && keyCode <= 90  && Number.isInteger(selected.x) && Number.isInteger(selected.y)) {
             matrix[selected.y][selected.x] = String.fromCharCode(keyCode)
-            window.requestAnimationFrame(draw)
+            window.requestAnimationFrame(doe)
         }
         if (e.keyCode >= 48 && e.keyCode <= 57 && Number.isInteger(selected.x) && Number.isInteger(selected.y)) {
             matrix[selected.y][selected.x] = parseInt(String.fromCharCode(e.keyCode), 10)
-            window.requestAnimationFrame(draw)
+            window.requestAnimationFrame(doe)
         }
         if (e.keyCode === 32 && Number.isInteger(selected.x) && Number.isInteger(selected.y)) {
             matrix[selected.y][selected.x] = undefined
-            window.requestAnimationFrame(draw)
+            window.requestAnimationFrame(doe)
         }
+    })
+}
+
+const doe = () => {
+//    document.getElementsByTagName('body')[0].style.backgroundColor = '#abc'
+    draw()
+    setTimeout(() => {
+        oplossing()
+        document.getElementsByTagName('body')[0].style.backgroundColor = ''
     })
 }

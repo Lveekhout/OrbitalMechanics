@@ -45,14 +45,13 @@ const oplossing = (idx = 0) => {
         }
     }
 
-    recurs(idx)
+    if (bekenden.length > 0) recurs(idx)
     const grouped = new Map()
     geraakten.forEach(k => grouped.set(k, 0))
     solutions.forEach((o, i) => {
         o.forEach(c => {
             const str = JSON.stringify(c)
-            if (grouped.has(str)) grouped.set(str, grouped.get(str) + 1)
-            else grouped.set(str, 1)
+            grouped.set(str, grouped.get(str) + 1)
         })
     })
 
@@ -65,7 +64,8 @@ const oplossing = (idx = 0) => {
             const cell = JSON.parse(k)
             ctx.save()
             ctx.fillStyle = 'white'
-            ctx.fillText(`${(v / solutions.length * 100).toFixed(0)}%`, 24+cell[1]*48, 24+cell[0]*48)
+            ctx.fillText(`${v}`, 24+cell[1]*48, 24+cell[0]*48)
+//            ctx.fillText(`${(v / solutions.length * 100).toFixed(0)}%`, 24+cell[1]*48, 24+cell[0]*48)
             ctx.restore()
         }
     })

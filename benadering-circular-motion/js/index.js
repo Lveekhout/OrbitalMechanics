@@ -118,6 +118,16 @@ const draw = ms => {
         } // Grafiek
         {
             ctx.save()
+            universe.object.h.forEach(e => {
+                ctx.beginPath()
+                ctx.arc(e[0], -e[1], 3 / camera.scale, 0, Math.PI * 2)
+                ctx.fillStyle = 'yellow'
+                ctx.fill()
+            })
+            ctx.restore()
+        } // Grafiek 2
+        {
+            ctx.save()
 
             ctx.beginPath()
             ctx.arc(object[idx][1], -object[idx][2], Math.sqrt(universe.object.M) * 3 / camera.scale, 0, Math.PI * 2)
@@ -190,6 +200,7 @@ const generate = () => {
             universe.object.v.push([t, object.v.x, object.v.y])
             universe.object.a.push([t, a])
             universe.object.r.push([t, r])
+            universe.object.h.push([t, Math.atan2(object.s.y, object.s.x)])
         }
     }
     console.log(`generate.duur: ${new Date() - start}, idx: ${idx}, pos#: ${universe.object.s.length}`)
