@@ -64,8 +64,8 @@ const oplossing = (idx = 0) => {
             const cell = JSON.parse(k)
             ctx.save()
             ctx.fillStyle = 'white'
-            ctx.fillText(`${v}`, 24+cell[1]*48, 24+cell[0]*48)
-//            ctx.fillText(`${(v / solutions.length * 100).toFixed(0)}%`, 24+cell[1]*48, 24+cell[0]*48)
+//            ctx.fillText(`${v}`, 24+cell[1]*48, 24+cell[0]*48)
+            ctx.fillText(`${(v / solutions.length * 100).toFixed(0)}%`, 24+cell[1]*48, 24+cell[0]*48)
             ctx.restore()
         }
     })
