@@ -57,18 +57,18 @@ const oplossing = (idx = 0) => {
 
     const canvas = document.getElementById('canvas')
     const ctx = canvas.getContext('2d')
+    ctx.save()
     ctx.textBaseline = "middle" // type CanvasTextBaseline = "alphabetic" | "bottom" | "hanging" | "ideographic" | "middle" | "top";
     ctx.textAlign = "center" // type CanvasTextAlign = "center" | "end" | "left" | "right" | "start";
     grouped.forEach((v, k) => {
         if (k) {
             const cell = JSON.parse(k)
-            ctx.save()
-            ctx.fillStyle = 'white'
-//            ctx.fillText(`${v}`, 24+cell[1]*48, 24+cell[0]*48)
+            ctx.fillStyle = v === solutions.length ? 'red' : 'white'
+            // ctx.fillText(`${v}`, 24+cell[1]*48, 24+cell[0]*48)
             ctx.fillText(`${(v / solutions.length * 100).toFixed(0)}%`, 24+cell[1]*48, 24+cell[0]*48)
-            ctx.restore()
         }
     })
+    ctx.restore()
 
     return solutions
 }

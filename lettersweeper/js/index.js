@@ -1,6 +1,7 @@
 const selected = {x: undefined, y: undefined}
 
 window.onload = e => {
+    // matrix.flatMap(e => e).filter(e => typeof e === 'string').length
     window.requestAnimationFrame(draw)
     document.getElementById('canvas').addEventListener('mousemove', e => {
         selected.x = Math.floor(e.offsetX * 10 / e.target.width)

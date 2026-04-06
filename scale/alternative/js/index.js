@@ -63,12 +63,13 @@ const loop = ms => {
     camera.ctx.fillText(`v = ${carArray[0].v.toFixed(6)}`, 10, 42)
     camera.ctx.fillText(`a = ${carArray[0].a.toFixed(6)}`, 10, 54)
 }
+
 const generateCars = () => {
     const result = []
     result.push(new Car(camera, track))
     result[0].v = 0
 
-    const aantal = 16
+    const aantal = 1//16
     for (let i = 1; i < aantal; i++) {
         result.push(new Car(camera, track))
         result[i].s = -(2 * pi * i / aantal) * (200 / pi / 2)
