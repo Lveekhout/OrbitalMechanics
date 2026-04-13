@@ -2,9 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Parametric Equations</title>
+    <title>Forces</title>
     <link rel="stylesheet" href="css/index.css">
+    <script src="../lib/math_polyfill.js"></script>
     <script src="../lib/Animation2d.js"></script>
+    <script src="lib/Vector_newstyle.js"></script>
     <script src="js/index.js"></script>
 </head>
 <body>
@@ -15,9 +17,13 @@
         </td>
     </tr>
     <tr>
-        <td colspan="2" style="margin: 0; padding: 10px">
+        <td colspan="1" style="margin: 0; padding: 10px">
             <button onclick="anim.start()">start</button>
             <button onclick="anim.stop()">stop</button>
+        </td>
+        <td colspan="1" style="margin: 0; padding: 10px">
+            <input id="Iangle" type="range" style="width: 320px" min="0" max="1000" value="150">
+            <input id="Pvect" type="range" style="width: 320px" min="-500" max="500" value="150">
         </td>
     </tr>
 </table>

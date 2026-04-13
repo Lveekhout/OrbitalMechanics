@@ -1,10 +1,3 @@
-const pi = Math.PI
-const sin = Math.sin
-const cos = Math.cos
-const min = Math.min
-const max = Math.max
-const sqrt = Math.sqrt
-
 let camera
 let track
 
