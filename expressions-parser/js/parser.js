@@ -2,7 +2,7 @@ function Parser(str) {
     let pos = 0
     this.expr = undefined
 
-    const isVariable = () => ['a', 'b', 'c', 'n', 'r', 't', 'x', 'y', 'z'].includes(str.charAt(pos))
+    const isVariable = () => ['a', 'b', 'c', 'd', 'n', 'r', 't', 'x', 'y', 'z'].includes(str.charAt(pos))
     const isDigit = () => ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(str.charAt(pos))
     const isNumber = () => isDigit()
     const isConstant = () => 'e' === str.charAt(pos) || 'i' === str.charAt(pos) || 'pi' === str.slice(pos, pos + 2)
@@ -173,6 +173,10 @@ const createExpr = str => new Parser(str).expr
 const createAdd = (...exprs) => ({type: 'add', values: exprs.map(e => JSON.parse(JSON.stringify(e)))})
 
 const createMultiply = (...exprs) => {
-    console.log(exprs)
+    // console.log(exprs)
     return {type: 'multiply', values: exprs.map(e => JSON.parse(JSON.stringify(e)))}
 }
+
+const createPower = (b, i) => ({type: 'exponent', base: b, index: i})
+
+const createFraction = (n, d) => ({type: 'fraction', numerator: JSON.parse(JSON.stringify(n)), denominator: JSON.parse(JSON.stringify(d))})

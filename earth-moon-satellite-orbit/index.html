@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Earth / Moon / Satellite</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script src="../lib/Animation2d.js"></script>
+    <script src="../lib/math_polyfill.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/universe.js"></script>
+    <script src="js/euler's-method.js"></script>
+</head>
+<body>
+<table border="1" cellpadding="0" cellspacing="0">
+    <tr>
+        <td colspan="2">
+            <canvas id="canvas" width="1700" height="640"></canvas>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="margin: 0; padding: 10px">
+            <button onclick="anim.start()">start</button>
+            <button onclick="anim.stop()">stop</button>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="margin: 0; padding: 10px">
+            <input id="input" type="range" min="0" max="10" value="0" step="1" oninput="handleInputEvent(value)" style="width: 30%">
+            <span id="output" style="padding-left: 1cm"></span>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="margin: 0; padding: 10px">
+            <label>x</label><input id="satx" value="-6778.1">
+            <label>y</label><input id="saty" value="0"><br>
+            <label>speed</label><input id="satspeed" value="10.747222222222222">
+            <label>direction(degree)</label><input id="satdir" value="270">
+            <button onclick="calculateTrajactory()">Calculate</button>
+            <button onclick="copyPosition()">Copy</button>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

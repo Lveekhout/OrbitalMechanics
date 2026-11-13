@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Euler's Method</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script src="../expressions-parser/js/parser-utils.js"></script>
+    <script src="../expressions-parser/js/parser.js"></script>
+    <script src="../expressions/js/expression-code/example-code.js"></script>
+    <script src="../expressions/js/expression-code/evaluate.js"></script>
+    <script src="../expressions/js/expression-code/normalise.js"></script>
+    <script src="../expressions/js/expression-code/simplify.js"></script>
+    <script src="../expressions/js/expression-code/derivative.js"></script>
+    <script src="../expressions/js/expression-code/factorise.js"></script>
+    <script src="../lib/math_polyfill.js"></script>
+    <script src="../lib/Vector_newstyle.js"></script>
+    <script src="../lib/map.js"></script>
+    <script src="../lib/Animation2d.js"></script>
+    <script src="js/appearance.js"></script>
+    <script src="js/ui-handling.js"></script>
+    <script src="js/index.js"></script>
+</head>
+<body>
+<table border="1" cellpadding="0" cellspacing="0">
+    <tr>
+        <td style="margin: 0; padding: 3px; width: 50%">
+            <label>dy/dx=</label>
+            <input id="input1" class="syntax_ok" value="-(a^2x)/(b^2y)" oninput="parseExpr(event)" style="margin: 0; padding: 6px">
+        </td>
+        <td style="margin: 0; padding: 3px">
+            <label>y=</label>
+            <input id="input2" class="syntax_ok" value="sqrt(a^2-a^2x^2/b^2)" oninput="parseExpr(event)" style="margin: 0; padding: 6px">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p id="errormessage1"></p>
+        </td>
+        <td>
+            <p id="errormessage2"></p>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div style="display: inline-block; width: 256px; height: 52px; padding: 5px 10px 0 0">
+                <span></span><br>
+                <input id="input-a" name="a" type="range" style="width: 100%" value="4" min="-10" max="10" step="0.01">
+            </div>
+            <div style="display: inline-block; width: 256px; height: 52px; padding: 5px 10px 0 0">
+                <span></span><br>
+                <input id="input-b" name="b" type="range" style="width: 100%" value="4" min="-10" max="10" step="0.01">
+            </div>
+            <div style="display: inline-block; width: 256px; height: 52px; padding: 5px 10px 0 0">
+                <span></span><br>
+                <input id="input-c" name="c" type="range" style="width: 100%" value="1" min="-10" max="10" step="0.01">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-right: 10px">
+            <input id="dirlength" type="range" style="width: 100%" value="0.6" min="0" max="1" step="0.01" oninput="dirlengthInput()">
+        </td>
+        <td style="padding-right: 10px">
+            <input id="diralpha" type="range" style="width: 100%" value="0.6" min="0" max="1" step="0.01" oninput="diralphaInput()">
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="padding-right: 10px">
+            <input id="density" type="range" style="width: 100%" value="1" min="0" max="2" step="0.001" oninput="densityInput()">
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="padding-right: 10px">
+            <input id="h" type="range" style="width: 100%" value="1" min="0.001" max="1" step="0.001" oninput="densityInput()">
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div style="display: inline-block; width: 256px; height: 52px; padding: 5px 10px 0 0">
+                <label>Euler's method</label>
+                <input id="showeuler" type="checkbox" oninput="densityInput()" checked>
+            </div>
+            <div style="display: inline-block; width: 256px; height: 52px; padding: 5px 10px 0 0">
+                <label>Midpoint method</label>
+                <input id="showmidpoint" type="checkbox" oninput="densityInput()">
+            </div>
+            <div style="display: inline-block; width: 256px; height: 52px; padding: 5px 10px 0 0">
+                <label>Runge-Kutta (RK4)</label>
+                <input id="showrk4" type="checkbox" oninput="densityInput()">
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <canvas id="canvas" width="920" height="640"></canvas>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="margin: 0; padding: 10px">
+            <button onclick="anim.start()">start</button>
+            <button onclick="anim.stop()">stop</button>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <ul>
+                <li>2de order</li>
+                <li>Vanaf x = 0 de andere kant op</li>
+            </ul>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

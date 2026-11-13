@@ -1,6 +1,7 @@
 const toLatex = (expr, level = 0) => {
     switch (expr.type) {
         case 'variable':
+            return ` ${expr.display[2].substring(0, 1)}_{${expr.display[2].substring(1)}} `
         case 'constant':
             return ` ${expr.display[2]} `
         case 'integer':

@@ -7,7 +7,7 @@ const simplifyExpr = (expr, vars = new Map()) => {
             if (vars.has(expr.display[0])) return JSON.parse(JSON.stringify(vars.getAsExpr(expr.display[0])))
             else return JSON.parse(JSON.stringify(expr))
         case 'add':
-            return simplifyAdd(normaliseExpr(expr), vars)
+            return simplifyAdd(expr, vars)
         case 'multiply':
             return simplifyMultiply(normaliseExpr(expr), vars)
         case 'exponent':
@@ -152,17 +152,17 @@ const simplifyFraction = (expr, vars) => {
                 denominator: {type: 'multiply', values: [n.denominator, d.numerator]}
             }, vars)
         } else if (n.type !== 'fraction' && d.type === 'fraction') {
-            return {
+            return simplifyFraction({
                 type: 'fraction',
                 numerator: normaliseExpr({type: 'multiply', values: [n, d.denominator]}),
                 denominator: d.numerator
-            }
+            })
         } else if (n.type === 'fraction' && d.type !== 'fraction') {
-            return {
+            return simplifyFraction({
                 type: 'fraction',
                 numerator: n.numerator,
                 denominator: normaliseExpr({type: 'multiply', values: [n.denominator, d]})
-            }
+            })
         } else return {type: expr.type, numerator: n, denominator: d}
     } else return JSON.parse(JSON.stringify(expr))
 }

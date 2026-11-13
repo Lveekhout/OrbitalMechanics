@@ -9,8 +9,7 @@ EarthOrbit.createCircularOrbit = (vr, color) => {
     return new EarthOrbit(vr, new Vector(v, Math.atan2(vr[1], vr[0]) + Math.PI / 2).p, color)
 }
 
-function EarthOrbit(vr, vv, color) { // Array, Array, String
-    if (!color) color = 'yellow'
+function EarthOrbit(vr, vv, color = 'yellow') { // Array, Array, String
     const M = 5.972e24 // https://en.wikipedia.org/wiki/Earth_mass
     const G = 6.67408e-11
     const mu = M * G // https://nl.wikipedia.org/wiki/Gravitatieconstante

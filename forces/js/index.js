@@ -8,7 +8,7 @@ const anim = new Animation2d()
 
 window.onload = e => {
     anim.registerCanvas(document.getElementById('canvas'), {x: 300, y: 400, scale: 115}, draw)
-    anim.start() //anim.drawAll()
+    anim.start() // anim.drawAll()
 }
 
 const draw = (canvas, ctx, camera, ms, dms) => {

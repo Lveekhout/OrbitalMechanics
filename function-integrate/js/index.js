@@ -113,7 +113,7 @@ const draw = ms => {
             ctx.restore()
         } // Raster
         drawGraph(ctx, f, view, '#00f2')
-        if (drawIntegral) drawGraph(ctx, g, view, '#f002')
+        if (drawIntegral) drawGraph(ctx, F, view, '#f002')
         {
             ctx.save()
             ctx.lineWidth = 2 / camera.scale

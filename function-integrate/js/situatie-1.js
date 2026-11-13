@@ -1,5 +1,14 @@
+const f = x => Math.pow(Math.E, x)
+const F = x => Math.pow(Math.E, x) + c
+//----------------------------------------------------------------
+// const f = x => 2*x
+// const g = x => x * x + d
+//----------------------------------------------------------------
 // const f = x => x / 5 + d
 // const g = x => Math.pow(x, 2) / 10 + c
+//----------------------------------------------------------------
+// const f = x => x * x
+// const F = x => x * x * x / 3 + d
 //----------------------------------------------------------------
 // const f = x => Math.sin(x) + d
 // const g = x => -Math.cos(x) + d * x
@@ -14,7 +23,7 @@
 // const g = x => x * Math.atan(x) - Math.log(Math.pow(x, 2) + 1 ) / 2 + d * x + c // https://www.integral-calculator.com/
 //----------------------------------------------------------------
 // const f = x => Math.pow(x, x) + d
-// const g = x => undefined
+// const F = x => undefined
 //----------------------------------------------------------------
 // const f = x => Math.atan(Math.sqrt(x+d + 1))
 // const g = x => (x+d + 2) * Math.atan(Math.sqrt(x+d + 1)) - Math.sqrt(x+d + 1)
@@ -31,8 +40,11 @@
 // const f = x => Math.sqrt(1 + 4 * Math.pow(x, 2)) + d
 // const g = x => undefined
 //----------------------------------------------------------------
-const f = x => 1 / Math.pow(Math.cos(x), 3)
-const g = x => undefined
+// const f = x => 1 / Math.pow(Math.cos(x), 3)
+// const g = x => undefined
+//----------------------------------------------------------------
+// const f = x => Math.log(x-d)
+// const g = x => (x - d) * (Math.log(x - d) - 1) + c
 
 const drawGraph = (ctx, functionOfX, view, color) => {
     ctx.save()

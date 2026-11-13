@@ -13,8 +13,8 @@ window.onload = () => {
     track = new Track(camera)
     carArray = generateCars()
     start()
-    startInterval()
-    startFirst()
+    // startInterval()
+    // startFirst()
 }
 
 const start = () => {
@@ -62,7 +62,7 @@ const generateCars = () => {
     result.push(new Car(camera, track))
     result[0].v = 0
 
-    const aantal = 1//16
+    const aantal = 2//16
     for (let i = 1; i < aantal; i++) {
         result.push(new Car(camera, track))
         result[i].s = -(2 * pi * i / aantal) * (200 / pi / 2)
